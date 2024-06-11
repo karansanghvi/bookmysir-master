@@ -485,21 +485,51 @@
 }
 
 /* SHOPPING CART */
-.cart_item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 10px;
+.cart_table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .cart_table th,
+  .cart_table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+  }
+  
+  .cart_table th {
+    background-color: #f2f2f2;
+  }
+  
+  .cart_table tr:nth-child(even) {
+    background-color: #f2f2f2;
   }
   
   .cart_item button {
-    background-color: #f44336;
-    color: white;
+    color: black;
     border: none;
     padding: 5px 10px;
     cursor: pointer;
   }
   
-  .cart_item button:hover {
-    background-color: #d32f2f;
+  .course_name {
+    font-size: 30px;
+    font-weight: 700;
+  }
+  
+  .price {
+    font-size: 36px;
+    font-weight: 700;
+  }
+
+  .cart_checkout {
+    background-color: var(--base-bg-color);
+    width: 300px;
+    height: 53px;
+    border-radius: 10px;
+    padding: 10px;
+    padding-left: 20px;
+    padding-right: 20px;
+    font-weight: 700px;
+    font-size: 24px;
   }

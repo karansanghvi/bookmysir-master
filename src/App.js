@@ -20,6 +20,7 @@ import { CartProvider } from './components/contexts/CartContext';
 import MyLearning from './pages/MyLearning';
 import CoursesCompleted from './pages/CoursesCompleted';
 import Profile from './pages/Profile';
+import StudentDetails from './pages/StudentDetails';
 
 function App() {
   const [courses, setCourses] = useState(() => {
@@ -55,7 +56,8 @@ function App() {
         <Route path="cart" element={<ShoppingCart />} />
         <Route path="mylearning" element={<MyLearning/>} />
         <Route path="coursescompleted" element={<CoursesCompleted/>} />
-        <Route path="/profile" element={<Profile/>}/>
+        <Route path="profile" element={<Profile/>}/>
+        <Route path="studentdetails" element={<StudentDetails/>} />
       </Routes>
       {!isAdminRoute && <Footer />}
     </>
