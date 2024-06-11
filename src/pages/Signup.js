@@ -1,30 +1,46 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import '../assets/styles/style.css';
 import signup_img from '../assets/images/Mobile login-rafiki.png';
-import { Link } from 'react-router-dom';
-import { collection, addDoc } from 'firebase/firestore';
-import { db } from '../firebase';
+import { Link, useNavigate } from 'react-router-dom';
+import { firestore } from '../firebase';
+import { addDoc, collection, query, where, getDocs, setDoc, doc } from 'firebase/firestore';
 
 function Signup() {
 
-  const [formData, setFormData] = useState({
-    fullName: '',
-    phoneNumber: '',
-    email: '',
-    password: ''
-  });
+  const nameRef = useRef();
+  const phoneNumberRef = useRef();
+  const emailRef = useRef();
+  const passwordRef = useRef();
+  const signupRef = collection(firestore, "signup");
+  const loginRef = collection(firestore, "login");
+  const [popup, setPopup] = useState(false);
+  const navigate = useNavigate();
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value});
-  };
-
-  const handleSubmit = async (e) => {
+  async function handleSignupSubmit(e) {
     e.preventDefault();
+  
+    let signupData = {
+      name: nameRef.current.value,
+      phoneNumber: phoneNumberRef.current.value,
+      email: emailRef.current.value,
+      password: passwordRef.current.value
+    };
+  
+    const q = query(loginRef, where("email", "==", signupData.email));
+  
     try {
-      const docRef = await addDoc(collection(db, "users"), formData);
-      console.log("Document written with ID:", docRef.id);
-    } catch (error) {
-      console.error("Error adding document: ", error);
+      const querySnapshot = await getDocs(q);
+      if (!querySnapshot.empty) {
+        setPopup(true);
+      } else {
+        await addDoc(signupRef, signupData);
+        await setDoc(doc(loginRef, signupData.email), signupData); // Store in the login collection
+        console.log("Signup successful");
+        localStorage.setItem('userName', signupData.name);
+        navigate('/');
+      }
+    } catch (e) {
+      console.log("Error with signup database: ", e);
     }
   };
 
@@ -38,17 +54,16 @@ function Signup() {
               <img src={signup_img} alt="" className='image' />
             </div>
             <div className='md:mr-32 mr-4 md:ml-0 ml-4 rounded-xl shadow-xl'>
-              <form onSubmit={handleSubmit}>
+              <form onSubmit={handleSignupSubmit}>
                 <h1 className='mt-4 ml-8'>Enter Full Name:</h1>
                 <input 
                   type="text" 
                   name="fullName" 
                   id="fullName" 
                   className='ml-8 styledInput' 
-                  placeholder='Name' 
+                  placeholder='Name'
+                  ref={nameRef} 
                   required
-                  value={formData.fullName}
-                  onChange={handleChange}
                 />
                 <h1 className='mt-4 ml-8'>Enter Phone Number:</h1>
                 <input 
@@ -57,9 +72,8 @@ function Signup() {
                   id="phoneNumber" 
                   className='ml-8 styledInput' 
                   placeholder='Phone Number'
+                  ref={phoneNumberRef}
                   required
-                  value={formData.phoneNumber}
-                  onChange={handleChange}
                 />
                 <h1 className='mt-4 ml-8'>Enter Email Address:</h1>
                 <input 
@@ -68,9 +82,8 @@ function Signup() {
                   id="email" 
                   className='ml-8 styledInput' 
                   placeholder='Email Address'
+                  ref={emailRef}
                   required
-                  value={formData.email}
-                  onChange={handleChange}
                 />
                 <h1 className='mt-4 ml-8'>Enter Password:</h1>
                 <input 
@@ -79,9 +92,8 @@ function Signup() {
                   id="password"
                   className='ml-8 styledInput'
                   placeholder='Password' 
+                  ref={passwordRef}
                   required
-                  value={formData.password}
-                  onChange={handleChange}
                 />
                 <div className='container'>
                   <button type="submit" className='submit_button mt-4 md:pl-52 pl-32 md:pr-52 pr-32 pt-2 pb-2'>Submit</button>
@@ -91,6 +103,14 @@ function Signup() {
             </div>
           </div>
         </div>
+        {popup && (
+          <div className='popup'>
+            <div className='popup_inner'>
+              <h1>Account already exists. Please log in.</h1>
+              <button onClick={() => setPopup(false)} className="font-bold mt-2">Close</button>
+            </div>
+          </div>
+        )}
       </section> 
     </>
   );

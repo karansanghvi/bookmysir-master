@@ -1,36 +1,46 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import '../assets/styles/style.css';
 import login_img from '../assets/images/Login-rafiki.png';
 import { Link, useNavigate } from 'react-router-dom';
-import { addDoc, collection } from 'firebase/firestore';
-import { db } from '../firebase';
+import { firestore } from '../firebase';
+import { collection, query, where, getDocs } from 'firebase/firestore';
 
 function Login() {
+  const emailRef = useRef();
+  const passwordRef = useRef();
+  const [popup, setPopup] = useState(false);
+  const ref = collection(firestore, "login");
 
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
   const navigate = useNavigate();
 
   const handleLoginSubmit = async (e) => {
     e.preventDefault();
 
+    let email = emailRef.current.value;
+    let password = passwordRef.current.value;
+
+    const q = query(ref, where("email", "==", email), where("password", "==", password));
+
     try {
-      await addDoc(collection(db, 'login'), {
-        email: email,
-        password: password,
-      });
-      console.log("Document successfully written!!");
-      navigate('/');
-    } catch (error) {
-      console.error("Error writing document: ", error);
+      const querySnapshot = await getDocs(q);
+      if (querySnapshot.empty) {
+        setPopup(true); 
+      } else {
+        const userDoc = querySnapshot.docs[0];
+        const userData = userDoc.data();
+        localStorage.setItem('userName', userData.name);
+        console.log("Login successful");
+        navigate('/');
+      }
+    } catch (e) {
+      console.log("Error with login database: ", e);
     }
   };
-  
 
   return (
     <>
       <section className='mt-32 md:pl-32'>
-      <h1 className='login_title'>Welcome Back To <span className='about_text'>bookmysir</span></h1>
+        <h1 className='login_title'>Welcome Back To <span className='about_text'>bookmysir</span></h1>
         <div>
           <div className='grid md:grid-cols-2 grid-cols-1'>
             <div>
@@ -42,34 +52,39 @@ function Login() {
                 <input 
                   type="email" 
                   name="email" 
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
                   required
                   className='ml-8 styledInput' 
                   placeholder='Email Address'
+                  ref={emailRef}
                 />
                 <h1 className='mt-4 ml-8'>Enter Password:</h1>
                 <input 
                   type="password"
                   name="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
                   required
                   className='ml-8 styledInput'
                   placeholder='Password'
+                  ref={passwordRef}
                 />
                 <div className='container'>
-                  <button className='submit_button mt-4 md:pl-52 pl-32 md:pr-52 pr-32 pt-2 pb-2'>Login</button>
+                  <button className='submit_button mt-4 md:pl-52 pl-32 md:pr-52 pr-32 pt-2 pb-2' type="submit">Login</button>
                 </div>
                 <h1 className='text-lg font-semibold text-center mt-4'>Don't have an account? <Link to="/signup">Signup</Link></h1>
               </form>
             </div>
           </div>
         </div>
-
+        {popup && (
+          <div className='popup'>
+            <div className='popup_inner'>
+              <h1>Account not found. Please sign up.</h1>
+              <button onClick={() => setPopup(false)}>Close</button>
+            </div>
+          </div>
+        )}
       </section> 
     </>
-  )
+  );
 }
 
-export default Login
+export default Login;

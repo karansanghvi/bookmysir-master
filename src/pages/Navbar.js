@@ -1,13 +1,29 @@
-import React, { useState } from 'react';
-import { Outlet, Link } from "react-router-dom";
-import logo from '../assets/images/bookmysir_logo.png'
+import React, { useEffect, useState } from 'react';
+import { Outlet, Link, useNavigate } from "react-router-dom";
+import logo from '../assets/images/bookmysir_logo.png';
 import '../assets/styles/style.css';
+import UserDropdown from '../components/UserDropdown';
 
 function Navbar() {
   const [isMenuOpen, setMenuOpen] = useState(false);
+  const [userName, setUserName] = useState(null);
+  const navigate = useNavigate();
 
   const toggleMenu = () => {
     setMenuOpen(!isMenuOpen);
+  };
+
+  useEffect(() => {
+    const name = localStorage.getItem('userName');
+    if (name) {
+      setUserName(name);
+    }
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem('userName');
+    setUserName(null);
+    navigate('/login');
   };
 
   return (
@@ -16,7 +32,6 @@ function Navbar() {
         <div className="flex flex-wrap items-center justify-between p-4 ml-4 mr-4">
           <a href="/" className="flex items-center space-x-3 rtl:space-x-reverse">
             <img src={logo} className="md:h-20 h-10" alt="NFC Logo" />
-            {/* <span className="title">bookmysir</span> */}
           </a>
           
           {/* hamburger */}
@@ -51,7 +66,11 @@ function Navbar() {
                 <a href="/contact" className="navbartext">Contact Us</a>
               </li>
               <li>
-                <a href="/login" className="navbartext">Login</a>
+                {userName ? (
+                  <UserDropdown userName={userName} onLogout={handleLogout} />
+                ) : (
+                  <a href="/login" className="navbartext">Login</a>
+                )}
               </li>
             </ul>
           </div>
@@ -75,7 +94,11 @@ function Navbar() {
                     <a href="/contact" className="navbartext">Contact Us</a>
                 </li>
               <li>
-                <a href="/login" className="text-black font-bold loginbutton">Login</a>
+                {userName ? (
+                  <UserDropdown userName={userName} onLogout={handleLogout} />
+                ) : (
+                  <a href="/login" className="text-black font-bold loginbutton">Login</a>
+                )}
               </li>
             </ul>
           </div>
