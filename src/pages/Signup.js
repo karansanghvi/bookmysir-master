@@ -1,3 +1,4 @@
+// Signup.js
 import React, { useRef, useState } from 'react';
 import '../assets/styles/style.css';
 import signup_img from '../assets/images/Mobile login-rafiki.png';
@@ -6,7 +7,6 @@ import { firestore } from '../firebase';
 import { addDoc, collection, query, where, getDocs, setDoc, doc } from 'firebase/firestore';
 
 function Signup() {
-
   const nameRef = useRef();
   const phoneNumberRef = useRef();
   const emailRef = useRef();
@@ -33,10 +33,10 @@ function Signup() {
       if (!querySnapshot.empty) {
         setPopup(true);
       } else {
-        await addDoc(signupRef, signupData);
-        await setDoc(doc(loginRef, signupData.email), signupData); // Store in the login collection
+        const userDocRef = await addDoc(signupRef, signupData);
+        await setDoc(doc(loginRef, userDocRef.id), signupData); // Store in the login collection using the document ID
         console.log("Signup successful");
-        localStorage.setItem('userName', signupData.name);
+        localStorage.setItem('userID', userDocRef.id); // Store user ID
         navigate('/');
       }
     } catch (e) {

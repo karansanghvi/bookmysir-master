@@ -1,8 +1,11 @@
+// Navbar.js
 import React, { useEffect, useState } from 'react';
 import { Outlet, Link, useNavigate } from "react-router-dom";
 import logo from '../assets/images/bookmysir_logo.png';
 import '../assets/styles/style.css';
 import UserDropdown from '../components/UserDropdown';
+import { firestore } from '../firebase';
+import { doc, getDoc } from 'firebase/firestore';
 
 function Navbar() {
   const [isMenuOpen, setMenuOpen] = useState(false);
@@ -14,14 +17,21 @@ function Navbar() {
   };
 
   useEffect(() => {
-    const name = localStorage.getItem('userName');
-    if (name) {
-      setUserName(name);
-    }
+    const fetchUserName = async () => {
+      const userID = localStorage.getItem('userID');
+      if (userID) {
+        const userDoc = await getDoc(doc(firestore, "login", userID));
+        if (userDoc.exists()) {
+          setUserName(userDoc.data().name);
+        }
+      }
+    };
+
+    fetchUserName();
   }, []);
 
   const handleLogout = () => {
-    localStorage.removeItem('userName');
+    localStorage.removeItem('userID');
     setUserName(null);
     navigate('/login');
   };

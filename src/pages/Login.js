@@ -1,3 +1,4 @@
+// Login.js
 import React, { useRef, useState } from 'react';
 import '../assets/styles/style.css';
 import login_img from '../assets/images/Login-rafiki.png';
@@ -28,7 +29,7 @@ function Login() {
       } else {
         const userDoc = querySnapshot.docs[0];
         const userData = userDoc.data();
-        localStorage.setItem('userName', userData.name);
+        localStorage.setItem('userID', userDoc.id); // Store user ID instead of name
         console.log("Login successful");
         navigate('/');
       }

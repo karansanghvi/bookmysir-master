@@ -1,6 +1,5 @@
 /* CUSTOM PROPERTY */
 :root {
-    /* colors */
     --base-bg-color: hsl(170, 75%, 41%);
     --text-red-color: hsl(351, 83%, 61%);
     --text-base-color: hsl(0, 0%, 0%);
@@ -532,4 +531,35 @@
     padding-right: 20px;
     font-weight: 700px;
     font-size: 24px;
+  }
+
+/* PROFILE PAGE */
+.profile_title {
+    font-size: 64px;
+    font-weight: 700;
+}
+
+.button-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+}
+
+.button-container button {
+    padding: 10px 200px;
+    font-size: 20px;
+    font-weight: 700;
+    background-color: var(--base-bg-color);
+    color: black;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+@media (max-width: 768px) {
+    button {
+      padding: 10px 120px;
+      font-size: 14px;
+    }
   }
