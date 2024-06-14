@@ -22,7 +22,8 @@ function Navbar() {
       if (userID) {
         const userDoc = await getDoc(doc(firestore, "login", userID));
         if (userDoc.exists()) {
-          setUserName(userDoc.data().name);
+          // setUserName(userDoc.data().name);
+          setUserName('Profile');
         }
       }
     };

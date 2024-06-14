@@ -1,17 +1,16 @@
-// Login.js
 import React, { useRef, useState } from 'react';
 import '../assets/styles/style.css';
 import login_img from '../assets/images/Login-rafiki.png';
 import { Link, useNavigate } from 'react-router-dom';
 import { firestore } from '../firebase';
 import { collection, query, where, getDocs } from 'firebase/firestore';
+import bcrypt from 'bcryptjs'; 
 
 function Login() {
   const emailRef = useRef();
   const passwordRef = useRef();
   const [popup, setPopup] = useState(false);
   const ref = collection(firestore, "login");
-
   const navigate = useNavigate();
 
   const handleLoginSubmit = async (e) => {
@@ -20,18 +19,27 @@ function Login() {
     let email = emailRef.current.value;
     let password = passwordRef.current.value;
 
-    const q = query(ref, where("email", "==", email), where("password", "==", password));
+    const q = query(ref, where("email", "==", email));
 
     try {
       const querySnapshot = await getDocs(q);
       if (querySnapshot.empty) {
-        setPopup(true); 
+        setPopup(true); // Email not found
       } else {
+        // Retrieve the first document (should be the only one due to unique email)
         const userDoc = querySnapshot.docs[0];
         const userData = userDoc.data();
-        localStorage.setItem('userID', userDoc.id); // Store user ID instead of name
-        console.log("Login successful");
-        navigate('/');
+        
+        // Compare hashed password
+        const isPasswordMatch = await bcrypt.compare(password, userData.password);
+
+        if (isPasswordMatch) {
+          localStorage.setItem('userID', userDoc.id); 
+          console.log("Login successful");
+          navigate('/');
+        } else {
+          setPopup(true); 
+        }
       }
     } catch (e) {
       console.log("Error with login database: ", e);
@@ -78,7 +86,7 @@ function Login() {
         {popup && (
           <div className='popup'>
             <div className='popup_inner'>
-              <h1>Account not found. Please sign up.</h1>
+              <h1>Incorrect email or password. Please try again.</h1>
               <button onClick={() => setPopup(false)}>Close</button>
             </div>
           </div>

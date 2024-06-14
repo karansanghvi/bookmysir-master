@@ -1,9 +1,90 @@
+/* ADMIN LOGIN MODAL */
+.modal {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #fff;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    width: 400px;
+    max-width: 90%;
+}
+
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.75);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.modal-content h2 {
+    margin-bottom: 20px;
+    font-size: 30px;
+    color: black;
+    font-weight: bold;
+}
+
+.modal-content input {
+    width: 100%;
+    padding: 12px 20px;
+    margin: 10px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-size: 16px;
+}
+
+.modal-content button {
+    width: 100%;
+    background-color: hsl(170, 75%, 41%);
+    color: black;
+    padding: 14px 20px;
+    margin: 10px 0;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+.modal-content .error {
+    color: red;
+    margin-top: 10px;
+}
+
+.logout-button {
+    background-color: hsl(170, 75%, 41%);
+    color: black;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-right: 32px;
+    font-weight: bold;
+}
+
 .admin_title {
     font-size: 50px;
     font-weight: 700;
 }
 
-.course_card {
+.course {
     background-color: hsl(170, 75%, 41%);
     padding: 40px;
     font-size: 24px;
@@ -23,8 +104,6 @@
     font-weight: bold;
     padding-left: 10px;
 }
-
-/* Add these styles to your main CSS file */
 
 .modal-overlay {
     position: fixed;
@@ -90,7 +169,64 @@
     font-size: 15px;
     font-weight: bold;
     border-radius: 10px;
-    width: 150px;
+    width: 100px;
     height: 40px;
     margin-right: 240px;
 }
+
+/* USERS ADMIN PANEL */
+.download-button {
+    margin-bottom: 1rem;
+    padding: 0.5rem 1rem;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .download-button:hover {
+    background-color: #45a049;
+  }
+  
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+  }
+  
+  th {
+    background-color: #f2f2f2;
+    text-align: left;
+  }
+  
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 1rem;
+  }
+  
+  .pagination button {
+    margin: 0 0.5rem;
+    padding: 0.5rem 1rem;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .pagination button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+  }
+  
+  .pagination span {
+    margin: 0 1rem;
+  }
+  

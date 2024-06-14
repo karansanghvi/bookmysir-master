@@ -99,22 +99,33 @@ const CourseContent = ({ courses, updateCourseDetails }) => {
                 </select>
             </div>
 
-            <ul>
-                {filteredCourses.map((course, index) => (
-                    <li key={index}>
-                        <p><b>Course Name:</b> {course.name}</p>
-                        <p><b>Course Description:</b> {course.description}</p>
-                        <p><b>Standard:</b> {course.standard}</p>
-                        <p><b>Branch:</b> {course.branch}</p>
-                        <p><b>Board:</b> {course.board}</p>
-                        <div className='flex justify-between mb-4'>
-                            <button onClick={() => handleButtonClick(course, true)} className='admin_button'>Edit Course</button>
-                            <button onClick={() => handleButtonClick(course, false)} className='admin_button'>View Course</button>
-                        </div>
-                        <hr />
-                    </li>
-                ))}
-            </ul>
+            <table className="min-w-full bg-white">
+                <thead>
+                    <tr>
+                        <th className="py-2 px-4 border-b">Course Name</th>
+                        <th className="py-2 px-4 border-b">Description</th>
+                        <th className="py-2 px-4 border-b">Standard</th>
+                        <th className="py-2 px-4 border-b">Branch</th>
+                        <th className="py-2 px-4 border-b">Board</th>
+                        <th className="py-2 px-4 border-b">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {filteredCourses.map((course, index) => (
+                        <tr key={index}>
+                            <td className="py-2 px-4 border-b">{course.name}</td>
+                            <td className="py-2 px-4 border-b">{course.description}</td>
+                            <td className="py-2 px-4 border-b">{course.standard}</td>
+                            <td className="py-2 px-4 border-b">{course.branch}</td>
+                            <td className="py-2 px-4 border-b">{course.board}</td>
+                            <td className="py-2 px-4 border-b">
+                                <button onClick={() => handleButtonClick(course, true)}>Edit</button>
+                                <button onClick={() => handleButtonClick(course, false)}>View</button>
+                            </td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
 
             <Modal show={showModal} onClose={() => setShowModal(false)}>
                 {isEditing && selectedCourse && (

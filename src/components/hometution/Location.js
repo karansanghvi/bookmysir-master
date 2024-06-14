@@ -1,11 +1,11 @@
 import React from 'react'
 
-function Summary() {
+function Location() {
   return (
     <div>
-      summary
+      location
     </div>
   )
 }
 
-export default Summary
+export default Location

@@ -303,6 +303,12 @@
     background-color: var(--base-bg-color);
 }
 
+.role {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 #styledInputTextAreaTution {
     background-color: #ECECEC;
     width: 1140px;
@@ -319,6 +325,8 @@
     padding-top: 14px;
     padding-left: 10px;
 }
+
+
 
 @media (max-width: 768px) {
     .home_tution_title {

@@ -1,10 +1,10 @@
-// Signup.js
 import React, { useRef, useState } from 'react';
 import '../assets/styles/style.css';
 import signup_img from '../assets/images/Mobile login-rafiki.png';
 import { Link, useNavigate } from 'react-router-dom';
 import { firestore } from '../firebase';
 import { addDoc, collection, query, where, getDocs, setDoc, doc } from 'firebase/firestore';
+import bcrypt from 'bcryptjs'; 
 
 function Signup() {
   const nameRef = useRef();
@@ -18,25 +18,29 @@ function Signup() {
 
   async function handleSignupSubmit(e) {
     e.preventDefault();
-  
+
     let signupData = {
       name: nameRef.current.value,
       phoneNumber: phoneNumberRef.current.value,
       email: emailRef.current.value,
       password: passwordRef.current.value
     };
-  
+
+    // Hashing the password using bcrypt
+    const hashedPassword = await bcrypt.hash(signupData.password, 10);
+    signupData.password = hashedPassword;
+
     const q = query(loginRef, where("email", "==", signupData.email));
-  
+
     try {
       const querySnapshot = await getDocs(q);
       if (!querySnapshot.empty) {
         setPopup(true);
       } else {
         const userDocRef = await addDoc(signupRef, signupData);
-        await setDoc(doc(loginRef, userDocRef.id), signupData); // Store in the login collection using the document ID
+        await setDoc(doc(loginRef, userDocRef.id), signupData);
         console.log("Signup successful");
-        localStorage.setItem('userID', userDocRef.id); // Store user ID
+        localStorage.setItem('userID', userDocRef.id); 
         navigate('/');
       }
     } catch (e) {

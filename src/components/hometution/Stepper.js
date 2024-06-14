@@ -51,12 +51,12 @@ const Stepper = ({ currentStep, steps }) => {
   };
 
   useEffect(() => {
-    //create object
-    const stepsState = steps.map((step, index) =>
+    // Create initial steps state with 7 steps
+    const stepsState = new Array(7).fill('').map((_, index) =>
       Object.assign(
         {},
         {
-          description: step,
+          description: `Step ${index + 1}`,
           completed: false,
           highlighted: index === 0 ? true : false,
           selected: index === 0 ? true : false,
@@ -68,7 +68,7 @@ const Stepper = ({ currentStep, steps }) => {
 
     const current = updateStep(currentStep - 1, stepRef.current);
     setNewStep(current);
-  }, [steps, currentStep]);
+  }, [currentStep]);
 
   const displaySteps = newStep.map((step, index) => {
     return (
@@ -85,7 +85,7 @@ const Stepper = ({ currentStep, steps }) => {
                          : ''
                      }`}
           >
-            {/* Display number */}
+            {/* Display number or check mark if completed */}
             {step.completed ? (
               <span className="text-white font-bold text-xl">&#10003;</span>
             ) : (

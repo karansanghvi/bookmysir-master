@@ -102,8 +102,8 @@ const AddCourseModal = ({ currentCourse, setCurrentCourse, handleSubmit, isEditi
 
 const ViewCoursesModal = ({ courses, handleEdit, handleDelete, onClose, handleFilterChange, filters }) => {
   return (
-    <div className="modal">
-      <div className="modal-content">
+    <div >
+      <div >
         <h1 className="text-4xl font-bold mb-4">View Added Courses</h1>
         <div className="filters mb-4 flex justify-between">
             <select name="standard" value={filters.standard} onChange={handleFilterChange} className='mr-4'>
@@ -135,32 +135,35 @@ const ViewCoursesModal = ({ courses, handleEdit, handleDelete, onClose, handleFi
             </select>
         </div>
         <hr />
-        <ul className='mb-10'>
-          {courses.map((course, index) => (
-            <li key={index}>
-              <p><b>Course Name:</b> {course.name}</p>
-              <p><b>Course Description: </b>{course.description}</p>
-              <p><b>Standard: </b>{course.standard}</p>
-              <p><b>Board: </b>{course.board}</p>
-              <p><b>Branch: </b>{course.branch}</p>
-              {/* {course.image && (
-                <div>
-                  <img 
-                    src={course.image instanceof Blob ? URL.createObjectURL(course.image) : course.image} 
-                    alt={course.name} 
-                    className='course-image' 
-                  />
-                </div>
-              )} */}
-              <div className='flex justify-between'>
-                <button onClick={() => handleEdit(index)} className='apply_button pl-4 pr-4'>Edit</button>
-                <button onClick={() => handleDelete(index)} className='apply_button pl-6 pr-6'>Delete</button>
-              </div>
-              <hr className='mt-4' />
-            </li>
-          ))}
-        </ul>
-        
+        <table className='table-auto w-full mb-10'>
+          <thead>
+            <tr>
+              <th className='px-4 py-2'>Course Name</th>
+              <th className='px-4 py-2'>Description</th>
+              <th className='px-4 py-2'>Standard</th>
+              <th className='px-4 py-2'>Board</th>
+              <th className='px-4 py-2'>Branch</th>
+              <th className='px-4 py-2'>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {courses.map((course, index) => (
+              <tr key={index}>
+                <td className='border px-4 py-2'>{course.name}</td>
+                <td className='border px-4 py-2'>{course.description}</td>
+                <td className='border px-4 py-2'>{course.standard}</td>
+                <td className='border px-4 py-2'>{course.board}</td>
+                <td className='border px-4 py-2'>{course.branch}</td>
+                <td className='border px-4 py-2'>
+                  <div className='flex justify-between'>
+                    <button onClick={() => handleEdit(index)} className='pl-4 pr-4'>Edit</button>
+                    <button onClick={() => handleDelete(index)} className='pl-6 pr-6'>Delete</button>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
         <button onClick={onClose} className='apply_button'>Go Back</button>
       </div>
     </div>
@@ -241,10 +244,10 @@ const CourseAdminPanel = ({ courses, setCourses }) => {
           <>
             <div className='grid grid-cols-2 gap-10'>
               <div>
-                <button onClick={() => setAddModalOpen(true)} className='course_card text-center'>Add New Course</button>
+                <button onClick={() => setAddModalOpen(true)} className='course'>Add New Course</button>
               </div>
               <div>
-                <button onClick={() => setViewModalOpen(true)} className='course_card'>View Added Courses</button>
+                <button onClick={() => setViewModalOpen(true)} className='course'>View Added Courses</button>
               </div>
             </div>
           </>
