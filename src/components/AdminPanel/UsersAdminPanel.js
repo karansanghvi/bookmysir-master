@@ -22,7 +22,7 @@ export default function UsersAdminPanel() {
     };
 
     fetchUsers();
-  }, []);
+  }, [usersRef]);
 
   const handleRemoveUser = async (userId) => {
     try {

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import '../../assets/styles/style.css';
 
-function TeacherDetails() {
+const TeacherDetails = ({ nextStep, prevStep, handleChange, values }) => {
   const [selectedClasses, setSelectedClasses] = useState([]);
   const [selectedEnggTypes, setSelectedEnggTypes] = useState([]);
 
@@ -12,6 +12,7 @@ function TeacherDetails() {
     } else {
       setSelectedClasses(selectedClasses.filter(c => c !== className));
     }
+    handleChange('selectedClasses')({ target: { value: selectedClasses } });
   };
 
   const handleEnggChange = (e) => {
@@ -21,6 +22,7 @@ function TeacherDetails() {
     } else {
       setSelectedEnggTypes(selectedEnggTypes.filter(e => e !== enggType));
     }
+    handleChange('selectedEnggTypes')({ target: { value: selectedEnggTypes } });
   };
 
   return (
@@ -29,90 +31,17 @@ function TeacherDetails() {
 
       <div>
         <h1 className='font-medium'>Choose Class:</h1>
-        <input
-          type="checkbox"
-          name="class1"
-          id="class1"
-          onChange={handleClassChange}
-        />
-        <label htmlFor="class1"> Class 1</label> <br />
-        <input
-          type="checkbox"
-          name="class2"
-          id="class2"
-          onChange={handleClassChange}
-        />
-        <label htmlFor="class2"> Class 2</label> <br />
-        <input
-          type="checkbox"
-          name="class3"
-          id="class3"
-          onChange={handleClassChange}
-        />
-        <label htmlFor="class3"> Class 3</label> <br />
-        <input
-          type="checkbox"
-          name="class4"
-          id="class4"
-          onChange={handleClassChange}
-        />
-        <label htmlFor="class4"> Class 4</label> <br />
-        <input
-          type="checkbox"
-          name="class5"
-          id="class5"
-          onChange={handleClassChange}
-        />
-        <label htmlFor="class5"> Class 5</label> <br />
-        <input
-          type="checkbox"
-          name="class6"
-          id="class6"
-          onChange={handleClassChange}
-        />
-        <label htmlFor="class6"> Class 6</label> <br />
-        <input
-          type="checkbox"
-          name="class7"
-          id="class7"
-          onChange={handleClassChange}
-        />
-        <label htmlFor="class7"> Class 7</label> <br />
-        <input
-          type="checkbox"
-          name="class8"
-          id="class8"
-          onChange={handleClassChange}
-        />
-        <label htmlFor="class8"> Class 8</label> <br />
-        <input
-          type="checkbox"
-          name="class9"
-          id="class9"
-          onChange={handleClassChange}
-        />
-        <label htmlFor="class9"> Class 9</label> <br />
-        <input
-          type="checkbox"
-          name="class10"
-          id="class10"
-          onChange={handleClassChange}
-        />
-        <label htmlFor="class10"> Class 10</label> <br />
-        <input
-          type="checkbox"
-          name="class11"
-          id="class11"
-          onChange={handleClassChange}
-        />
-        <label htmlFor="class11"> Class 11</label> <br />
-        <input
-          type="checkbox"
-          name="class12"
-          id="class12"
-          onChange={handleClassChange}
-        />
-        <label htmlFor="class12"> Class 12</label> <br />
+        {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map(classNum => (
+          <React.Fragment key={`class${classNum}`}>
+            <input
+              type="checkbox"
+              name={`class${classNum}`}
+              id={`class${classNum}`}
+              onChange={handleClassChange}
+            />
+            <label htmlFor={`class${classNum}`}> Class {classNum}</label> <br />
+          </React.Fragment>
+        ))}
       </div>
 
       <div>
@@ -132,8 +61,13 @@ function TeacherDetails() {
         />
         <label htmlFor="degree"> Engineering Degree</label> <br />
       </div>
+      <br />
+      <div className='home_buttons'>
+        <button onClick={prevStep} className='prev_button'>Back</button>
+        <button onClick={nextStep} className='next_button_two'>Next</button>
+      </div>
     </div>
   );
-}
+};
 
 export default TeacherDetails;

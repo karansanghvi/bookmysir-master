@@ -7,10 +7,10 @@
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
-    "bcryptjs": "^2.4.3",
     "crypto-browserify": "^3.12.0",
     "file-saver": "^2.0.5",
     "firebase": "^10.12.2",
+    "google-maps-react": "^2.0.6",
     "react": "^18.3.1",
     "react-checkmark": "^2.0.0",
     "react-dom": "^18.3.1",
@@ -49,9 +49,6 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  },
-  "resolutions": {
-    "crypto": "crypto-browserify"
   },
   "devDependencies": {
     "react-router-dom": "^6.23.1",

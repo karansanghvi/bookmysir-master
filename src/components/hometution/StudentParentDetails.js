@@ -1,16 +1,20 @@
+// StudentParentDetails.js
+
 import React, { useState } from 'react';
 import '../../assets/styles/style.css';
 
-function StudentParentDetails() {
+function StudentParentDetails({ nextStep, prevStep, handleChange, values }) {
   const [selectedClass, setSelectedClass] = useState('');
-  const [selectedEngg, setSelectedEngg] = useState(''); 
+  const [selectedEngg, setSelectedEngg] = useState('');
 
   const handleClassChange = (e) => {
     setSelectedClass(e.target.value);
+    handleChange('class')(e); // Update parent state
   };
 
   const handleEnggChange = (e) => {
     setSelectedEngg(e.target.value);
+    handleChange('engg')(e); // Update parent state
   };
 
   return (
@@ -43,7 +47,7 @@ function StudentParentDetails() {
       <select
         name="engg"
         id="engg"
-        className='styledInput'
+        className='styledInput mb-6'
         value={selectedEngg}
         onChange={handleEnggChange}
       >
@@ -51,6 +55,11 @@ function StudentParentDetails() {
         <option value="degree">Engineering Degree</option>
         <option value="diploma">Engineering Diploma</option>
       </select>
+
+      <div className='home_buttons'>
+        <button onClick={prevStep} className='prev_button'>Back</button>
+        <button onClick={nextStep} className='next_button_two'>Next</button>
+      </div>
     </div>
   );
 }

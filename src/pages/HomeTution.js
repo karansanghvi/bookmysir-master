@@ -1,58 +1,127 @@
 import React, { useState } from 'react';
-import { StepperContext } from '../components/contexts/StepperContext';
 import Stepper from '../components/hometution/Stepper';
-import StepperControl from '../components/hometution/StepperControl';
-import '../assets/styles/style.css';
-import PersonalDetails from '../components/hometution/PersonalDetails';
-import Role from '../components/hometution/Role';
-import TypeOfTution from '../components/hometution/TypeOfTution';
-import Location from '../components/hometution/Location';
-import TeacherDetails from '../components/hometution/TeacherDetails';
+import PersonalDetailsStep from '../components/hometution/PersonalDetailsStep';
+import RoleStep from '../components/hometution/RoleStep';
+import SubjectStep from '../components/hometution/SubjectStep';
+import TypeStep from '../components/hometution/TypeStep';
+import LocationStep from '../components/hometution/LocationStep';
 import StudentParentDetails from '../components/hometution/StudentParentDetails';
-import Subject from '../components/hometution/Subject';
+import TeacherDetails from '../components/hometution/TeacherDetails';
+import '../assets/styles/style.css';
 
-const HomeTution = () => {
+export default function HomeTution() {
   const [currentStep, setCurrentStep] = useState(1);
-  const [userData, setUserData] = useState({});
-  const [finalData, setFinalData] = useState([]);
-  const [classType, setClassType] = useState('');
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    phoneNumber: '',
+    role: '',
+  });
 
-  const steps = [
-    'Personal Details',
-    'Role',
-    'Subject',
-    'Type Of Tution',
-    'Location',
-  ];
-
-  const displayStep = (step) => {
-    switch (step) {
+  const nextStep = () => {
+    switch (currentStep) {
       case 1:
-        return <PersonalDetails />;
+        setCurrentStep(2);
+        break;
       case 2:
-        return <Role />;
+        if (formData.role === 'SP') {
+          setCurrentStep(3);
+        } else if (formData.role === 'Teacher') {
+          setCurrentStep(4);
+        }
+        break;
       case 3:
-        return userData.role === 'Teacher' ? (
-          <TeacherDetails />
-        ) : (
-          <StudentParentDetails setClassType={setClassType} />
-        );
+        setCurrentStep(5);
+        break;
       case 4:
-        return <Subject/>;
+        setCurrentStep(5);
+        break;
       case 5:
-        return <TypeOfTution />;
+        setCurrentStep(6);
+        break;
       case 6:
-        return <Location />;
+        setCurrentStep(7);
+        break;
       default:
-        return null; 
+        break;
     }
   };
 
-  const handleClick = (direction) => {
-    let newStep = currentStep;
+  const prevStep = () => {
+    setCurrentStep((prevStep) => (prevStep > 1 ? prevStep - 1 : prevStep));
+  };
 
-    direction === 'next' ? newStep++ : newStep--;
-    newStep > 0 && newStep <= steps.length && setCurrentStep(newStep);
+  const handleChange = (input) => (e) => {
+    setFormData({ ...formData, [input]: e.target.value });
+  };
+
+  const renderStep = () => {
+    switch (currentStep) {
+      case 1:
+        return (
+          <PersonalDetailsStep
+            nextStep={nextStep}
+            handleChange={handleChange}
+            values={formData}
+          />
+        );
+      case 2:
+        return (
+          <RoleStep
+            nextStep={nextStep}
+            prevStep={prevStep}
+            handleChange={handleChange}
+            values={formData}
+          />
+        );
+      case 3:
+        return (
+          <StudentParentDetails
+            nextStep={nextStep}
+            prevStep={prevStep}
+            handleChange={handleChange}
+            values={formData}
+          />
+        );
+      case 4:
+        return (
+          <TeacherDetails
+            nextStep={nextStep}
+            prevStep={prevStep}
+            handleChange={handleChange}
+            values={formData}
+          />
+        );
+      case 5:
+        return (
+          <SubjectStep
+            nextStep={nextStep}
+            prevStep={prevStep}
+            handleChange={handleChange}
+            values={formData}
+          />
+        );
+      case 6:
+        return (
+          <TypeStep
+            nextStep={nextStep}
+            prevStep={prevStep}
+            handleChange={handleChange}
+            values={formData}
+          />
+        );
+      case 7:
+        return (
+          <LocationStep
+            nextStep={nextStep}
+            prevStep={prevStep}
+            handleChange={handleChange}
+            values={formData}
+          />
+        );
+      default:
+        return null;
+    }
   };
 
   return (
@@ -61,28 +130,11 @@ const HomeTution = () => {
         <h1 className='home_tution_title md:text-center'>
           Book Your <span className='home_text'>Home</span> Tutions
         </h1>
-        <div className="md:w-120 mx-auto shadow-xl rounded-2xl bg-white md:ml-32 ml-4 md:mr-32">
-          <div className="container horizontal mt-5">
-            <Stepper currentStep={currentStep} steps={steps} />
-          </div>
-          <div>
-            <StepperContext.Provider
-              value={{ userData, setUserData, finalData, setFinalData, classType, setClassType }}
-            >
-              {displayStep(currentStep)}
-            </StepperContext.Provider>
-          </div>
-          {currentStep !== steps.length && (
-            <StepperControl
-              handleClick={handleClick}
-              currentStep={currentStep}
-              steps={steps}
-            />
-          )}
+        <div className='md:w-120 mx-auto shadow-xl rounded-2xl bg-white md:ml-32 ml-4 md:mr-32 p-8'>
+          <Stepper currentStep={currentStep} steps={7} /> 
+          {renderStep()}
         </div>
       </div>
     </>
   );
-};
-
-export default HomeTution;
+}

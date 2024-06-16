@@ -4,7 +4,7 @@ import signup_img from '../assets/images/Mobile login-rafiki.png';
 import { Link, useNavigate } from 'react-router-dom';
 import { firestore } from '../firebase';
 import { addDoc, collection, query, where, getDocs, setDoc, doc } from 'firebase/firestore';
-import bcrypt from 'bcryptjs'; 
+// import bcrypt from 'bcryptjs'; 
 
 function Signup() {
   const nameRef = useRef();
@@ -27,8 +27,8 @@ function Signup() {
     };
 
     // Hashing the password using bcrypt
-    const hashedPassword = await bcrypt.hash(signupData.password, 10);
-    signupData.password = hashedPassword;
+    // const hashedPassword = await bcrypt.hash(signupData.password, 10);
+    // signupData.password = hashedPassword;
 
     const q = query(loginRef, where("email", "==", signupData.email));
 

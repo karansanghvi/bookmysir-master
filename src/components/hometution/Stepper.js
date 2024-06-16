@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import '../../assets/styles/style.css';
+import '../../assets/styles/style.css'; 
 
 const Stepper = ({ currentStep, steps }) => {
   const [newStep, setNewStep] = useState([]);
@@ -12,7 +12,6 @@ const Stepper = ({ currentStep, steps }) => {
     let count = 0;
 
     while (count < newSteps.length) {
-      // current step
       if (count === stepNumber) {
         newSteps[count] = {
           ...newSteps[count],
@@ -20,29 +19,22 @@ const Stepper = ({ currentStep, steps }) => {
           selected: true,
           completed: true,
         };
-
         count++;
-      }
-      // step completed
-      else if (count < stepNumber) {
+      } else if (count < stepNumber) {
         newSteps[count] = {
           ...newSteps[count],
           highlighted: false,
           selected: true,
           completed: true,
         };
-
         count++;
-      }
-      // step pending
-      else {
+      } else {
         newSteps[count] = {
           ...newSteps[count],
           highlighted: false,
           selected: false,
           completed: false,
         };
-
         count++;
       }
     }
@@ -51,8 +43,7 @@ const Stepper = ({ currentStep, steps }) => {
   };
 
   useEffect(() => {
-    // Create initial steps state with 7 steps
-    const stepsState = new Array(7).fill('').map((_, index) =>
+    const stepsState = new Array(steps).fill('').map((_, index) =>
       Object.assign(
         {},
         {
@@ -68,24 +59,17 @@ const Stepper = ({ currentStep, steps }) => {
 
     const current = updateStep(currentStep - 1, stepRef.current);
     setNewStep(current);
-  }, [currentStep]);
+  }, [currentStep, steps]); 
 
   const displaySteps = newStep.map((step, index) => {
     return (
-      <div
-        key={index}
-        className="flex flex-col items-center md:flex-row mr-10"
-      >
+      <div key={index} className="flex flex-col items-center md:flex-row mr-10">
         <div className="relative flex flex-col items-center text-teal-600">
           <div
-            className={`rounded-full transition duration-500 ease-in-out border-2
-                     border-gray-300 h-12 w-12 flex items-center justify-center py-3 ${
-                       step.selected
-                         ? 'circle_stepper text-white font-bold border'
-                         : ''
-                     }`}
+            className={`rounded-full transition duration-500 ease-in-out border-2 border-gray-300 h-12 w-12 flex items-center justify-center py-3 ${
+              step.selected ? 'circle_stepper text-white font-bold border' : ''
+            }`}
           >
-            {/* Display number or check mark if completed */}
             {step.completed ? (
               <span className="text-white font-bold text-xl">&#10003;</span>
             ) : (
@@ -95,11 +79,7 @@ const Stepper = ({ currentStep, steps }) => {
         </div>
         {index !== newStep.length - 1 && (
           <div className="flex-auto border-t-2 transition duration-500 ease-in-out mx-4 w-full md:w-auto" style={{ minWidth: '30px' }}>
-            <div
-              className={`h-1 ${
-                step.completed ? 'circle_stepper' : 'bg-gray-300'
-              }`}
-            ></div>
+            <div className={`h-1 ${step.completed ? 'circle_stepper' : 'bg-gray-300'}`}></div>
           </div>
         )}
       </div>

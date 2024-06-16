@@ -4,7 +4,7 @@ import login_img from '../assets/images/Login-rafiki.png';
 import { Link, useNavigate } from 'react-router-dom';
 import { firestore } from '../firebase';
 import { collection, query, where, getDocs } from 'firebase/firestore';
-import bcrypt from 'bcryptjs'; 
+// import bcrypt from 'bcryptjs'; 
 
 function Login() {
   const emailRef = useRef();
@@ -31,9 +31,10 @@ function Login() {
         const userData = userDoc.data();
         
         // Compare hashed password
-        const isPasswordMatch = await bcrypt.compare(password, userData.password);
+        // const isPasswordMatch = await bcrypt.compare(password, userData.password);
 
-        if (isPasswordMatch) {
+        // if (isPasswordMatch) {
+        if (password === userData.password) {
           localStorage.setItem('userID', userDoc.id); 
           console.log("Login successful");
           navigate('/');

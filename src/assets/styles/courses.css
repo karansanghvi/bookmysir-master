@@ -9,7 +9,7 @@
   display: flex;
   flex-wrap: wrap;
   padding: 20px;
-  align-items: flex-start; 
+  align-items: flex-start;
 }
 
 .filter-column {
@@ -43,21 +43,74 @@
   border-radius: 10px;
   width: 200px;
   height: 40px;
-  /* margin-right: 300px; */
+  margin-top: 10px;
 }
 
 .course_pic {
   margin-left: -340px;
 }
 
+.course-item {
+  margin-bottom: 20px;
+}
+
+.view-course-button {
+  background-color: var(--base-bg-color);
+  color: black;
+  padding: 10px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+}
+
 @media (max-width: 768px) {
+
+  .courses_title {
+    font-size: 80px;
+  }
+
   .App {
     flex-direction: column;
   }
 
+  .apply_button {
+    width: 100%;
+    font-size: 10px;
+  }
+
   .filter-column {
     margin-bottom: 20px;
-    margin-right: 0;
+    margin-right: 20px;
+  }
+
+  .filter-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .filter-select {
+    width: 300px;
+    margin-bottom: 10px;
+  }
+
+  .filter-select select {
+    width: 100%;
+  }
+
+  .apply_button {
+    width: 100%;
+    max-width: 100px;
+  }
+
+  .course-item {
+    margin-bottom: 10px;
+  }
+
+  .view-course-button {
+    width: 100%;
+    margin-right: 20px;
   }
 }
 
@@ -69,30 +122,39 @@
 }
 
 /* COURSE DETAILS */
+/* courses.css */
 .course_hero {
   background-color: hsl(170, 75%, 41%);
-  width: 1520px;
-  height: 400px;
+  width: 100%; /* Change from fixed width to 100% */
+  height: auto; /* Change to auto to adapt height based on content */
+  padding: 20px; /* Add padding for better spacing */
+  box-sizing: border-box; /* Ensure padding is included in the width calculation */
 }
 
 .course_card {
   background-color: white !important;
-  width: 402px;
-  height: 343px;
-  margin-left: 140px;
+  width: 100%; /* Make width 100% to take full width in smaller screens */
+  max-width: 402px; /* Maintain max width for larger screens */
+  height: auto; /* Auto height for content adaptability */
+  margin: 20px auto; /* Center align with margin */
+  border-radius: 20px;
+  padding: 20px; /* Add padding for inner spacing */
+  box-sizing: border-box; /* Ensure padding is included in width calculation */
 }
 
 .course_card img {
+  width: 100%; /* Make image width 100% for responsive scaling */
   margin-top: -20px;
+  border-radius: 20px 20px 0 0; /* Round top corners */
 }
 
 .add_to_cart_button {
   background-color: hsla(351, 83%, 61%, 1);
-  padding-top: 2px;
-  padding-bottom: 2px;
-  padding-left: 80px;
-  padding-right: 80px;
+  padding: 10px 20px; /* Adjust padding for better button size */
   border-radius: 5px;
+  text-align: center; /* Center align text */
+  display: inline-block; /* Ensure it's inline-block for proper sizing */
+  margin-top: 20px; /* Add margin for spacing */
 }
 
 .course_detail_heading {
@@ -103,4 +165,30 @@
 .include_text {
   font-size: 24px;
   font-weight: 400;
+}
+
+/* Media queries for responsiveness */
+@media (max-width: 768px) {
+  .course_hero {
+    height: auto; /* Adjust height to auto for smaller screens */
+    padding: 10px; /* Reduce padding for smaller screens */
+  }
+
+  .course_card {
+    margin-left: 0; /* Remove left margin for smaller screens */
+    padding: 10px; /* Reduce padding for smaller screens */
+  }
+
+  .course_detail_heading {
+    font-size: 24px; /* Reduce font size for smaller screens */
+  }
+
+  .include_text {
+    font-size: 18px; /* Reduce font size for smaller screens */
+  }
+
+  .add_to_cart_button {
+    padding: 10px 15px; /* Adjust padding for better fit */
+    font-size: 16px; /* Adjust font size */
+  }
 }

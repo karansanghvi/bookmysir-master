@@ -1,29 +1,17 @@
-import React, { useState } from 'react';
+import React from 'react';
 import '../../assets/styles/style.css';
 
-const PersonalDetails = () => {
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phoneNumber: ''
-  });
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-  };
-
-
+const PersonalDetailsStep = ({ nextStep, handleChange, values }) => {
   return (
-    <>
+    <div>
       <h1 className='personal_details_title ml-8'>Personal Details</h1>
       <form>
         <h1 className='mt-4 ml-8'>Enter Full Name:</h1>
         <input 
           type="text" 
           name="name"
-          value={formData.name}
-          onChange={handleInputChange}
+          value={values.name}
+          onChange={handleChange('name')}
           className="ml-8 styledInput"
           placeholder='Name'
           required
@@ -32,8 +20,8 @@ const PersonalDetails = () => {
         <input 
           type="email" 
           name="email"
-          value={formData.email}
-          onChange={handleInputChange}
+          value={values.email}
+          onChange={handleChange('email')}
           className="ml-8 styledInput"
           placeholder='Email'
         />
@@ -41,15 +29,17 @@ const PersonalDetails = () => {
         <input 
           type="tel" 
           name="phoneNumber"
-          value={formData.phoneNumber}
-          onChange={handleInputChange}
+          value={values.phoneNumber}
+          onChange={handleChange('phoneNumber')}
           className="ml-8 styledInput"
           placeholder='Phone Number'
           required
         />
       </form>
-    </>
+      <br />
+      <button onClick={nextStep} className='next_button ml-8 mt-4'>Next</button>
+    </div>
   );
 };
 
-export default PersonalDetails;
+export default PersonalDetailsStep;

@@ -24,15 +24,14 @@ const CourseDetail = ({ courses }) => {
           <div className='pl-32 pt-8'>
             <div className='grid md:grid-cols-2 grid-cols-1'>
               <div>
-                <h1 className='text-6xl font-bold mb-4'>{course.name}</h1>
+                <h1 className='md:text-6xl font-bold mb-4 md:mr-0 mr-120 text-4xl'>{course.name}</h1>
                 <p className='mb-4'>{course.description}</p>
               </div>
-              <div className='course_card bg-white'>
+              <div className='course_card'>
                 <img src={course_preview} alt="" className='rounded-xl' />
                 <p className='text-sm font-normal text-center'>Preview this course</p>
-                <h1>₹500</h1>
+                <h1 className='md:ml-6 font-semibold text-2xl'>₹500</h1>
                 <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
-                  {/* <button onClick={handleAddToCart} className='add_to_cart_button'>Add To Cart</button> */}
                   <Link to="/cart" onClick={handleAddToCart} className='add_to_cart_button'>Add To Cart</Link>
                 </div>
               </div>
