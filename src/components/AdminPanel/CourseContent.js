@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { collection, addDoc, getDocs } from 'firebase/firestore';
+import { firestore } from '../../firebase';
 import Modal from '../Modal'; // Import the modal component
 
 const CourseContent = ({ courses, updateCourseDetails }) => {
@@ -17,6 +19,23 @@ const CourseContent = ({ courses, updateCourseDetails }) => {
         board: ''
     });
     const [showModal, setShowModal] = useState(false);
+    const [title, setTitle] = useState('');
+    const [content, setContent] = useState('');
+    const [accordionItems, setAccordionItems] = useState([]);
+
+    useEffect(() => {
+        const fetchAccordionItems = async () => {
+            try {
+                const querySnapshot = await getDocs(collection(firestore, 'accordions'));
+                const items = querySnapshot.docs.map(doc => doc.data());
+                setAccordionItems(items);
+            } catch (error) {
+                console.error('Error fetching accordion items: ', error);
+            }
+        };
+
+        fetchAccordionItems();
+    }, []);
 
     const handleButtonClick = (course, isEdit) => {
         setSelectedCourse(course);
@@ -35,9 +54,32 @@ const CourseContent = ({ courses, updateCourseDetails }) => {
         setDetails(prevDetails => ({ ...prevDetails, [name]: value }));
     };
 
-    const handleSubmit = (e) => {
+    const handleAccordionInputChange = (e) => {
+        const { name, value } = e.target;
+        if (name === 'title') {
+            setTitle(value);
+        } else if (name === 'content') {
+            setContent(value);
+        }
+    };
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
         updateCourseDetails(selectedCourse.name, details);
+
+        try {
+            await addDoc(collection(firestore, 'accordions'), {
+                title,
+                content,
+                courseName: selectedCourse.name
+            });
+            setTitle('');
+            setContent('');
+            alert('Accordion item added!');
+        } catch (error) {
+            console.error('Error adding document: ', error);
+        }
+
         setSelectedCourse(null);
         setIsEditing(false);
         setIsViewing(false);
@@ -162,6 +204,26 @@ const CourseContent = ({ courses, updateCourseDetails }) => {
                                     className='admin_input'
                                 />
                             </div>
+                            <div>
+                                <h2>Add Accordion Item</h2>
+                                <div>
+                                    <label>Title:</label>
+                                    <input
+                                        type="text"
+                                        name="title"
+                                        value={title}
+                                        onChange={handleAccordionInputChange}
+                                    />
+                                </div>
+                                <div>
+                                    <label>Content:</label>
+                                    <textarea
+                                        name="content"
+                                        value={content}
+                                        onChange={handleAccordionInputChange}
+                                    ></textarea>
+                                </div>
+                            </div>
                             <div className='flex justify-between mt-4'>
                                 <button type="submit" className='admin_button pl-4 pr-4'>Save</button>
                                 <button type="button" onClick={() => setShowModal(false)} className='admin_button pl-4 pr-4'>Cancel</button>
@@ -176,6 +238,18 @@ const CourseContent = ({ courses, updateCourseDetails }) => {
                         <p><b>Hours:</b> {selectedCourse.hours}</p>
                         <p><b>Requirements:</b> {selectedCourse.requirements}</p>
                         <p><b>Instructor Name:</b> {selectedCourse.instructor}</p>
+                        <div>
+                            <h2>Accordion Items</h2>
+                            {accordionItems
+                                .filter(item => item.courseName === selectedCourse.name)
+                                .map((item, index) => (
+                                    <div key={index} className='accordion-item'>
+                                        <h3>{item.title}</h3>
+                                        <p>{item.content}</p>
+                                    </div>
+                                ))
+                            }
+                        </div>
                     </div>
                 )}
             </Modal>

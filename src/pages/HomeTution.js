@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { collection, addDoc } from 'firebase/firestore';
+import { firestore } from '../firebase';
 import Stepper from '../components/hometution/Stepper';
 import PersonalDetailsStep from '../components/hometution/PersonalDetailsStep';
 import RoleStep from '../components/hometution/RoleStep';
@@ -7,18 +9,29 @@ import TypeStep from '../components/hometution/TypeStep';
 import LocationStep from '../components/hometution/LocationStep';
 import StudentParentDetails from '../components/hometution/StudentParentDetails';
 import TeacherDetails from '../components/hometution/TeacherDetails';
+import SubmissionModal from '../components/hometution/SubmissionModal';
 import '../assets/styles/style.css';
 
 export default function HomeTution() {
   const [currentStep, setCurrentStep] = useState(1);
+  const [showModal, setShowModal] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     phoneNumber: '',
     role: '',
+    address: '',
+    typeOfTuition: '',
+    class: '',
+    engg: '',
+    selectedClasses: [], 
+    selectedEnggTypes: [],
+    selectedSubjects: [],
+    selectedSemesters: [], 
+    selectedBranches: []  
   });
 
-  const nextStep = () => {
+  const nextStep = async () => {
     switch (currentStep) {
       case 1:
         setCurrentStep(2);
@@ -31,8 +44,6 @@ export default function HomeTution() {
         }
         break;
       case 3:
-        setCurrentStep(5);
-        break;
       case 4:
         setCurrentStep(5);
         break;
@@ -41,6 +52,10 @@ export default function HomeTution() {
         break;
       case 6:
         setCurrentStep(7);
+        break;
+      case 7:
+        await saveToFirestore();
+        setShowModal(true);
         break;
       default:
         break;
@@ -53,6 +68,19 @@ export default function HomeTution() {
 
   const handleChange = (input) => (e) => {
     setFormData({ ...formData, [input]: e.target.value });
+  };
+
+  const closeModal = () => {
+    setShowModal(false);
+  };
+
+  const saveToFirestore = async () => {
+    try {
+      const docRef = await addDoc(collection(firestore, 'hometution'), formData);
+      console.log("Document written with ID: ", docRef.id);
+    } catch (e) {
+      console.error("Error adding document: ", e);
+    }
   };
 
   const renderStep = () => {
@@ -133,6 +161,7 @@ export default function HomeTution() {
         <div className='md:w-120 mx-auto shadow-xl rounded-2xl bg-white md:ml-32 ml-4 md:mr-32 p-8'>
           <Stepper currentStep={currentStep} steps={7} /> 
           {renderStep()}
+          {showModal && <SubmissionModal closeModal={closeModal} />}
         </div>
       </div>
     </>

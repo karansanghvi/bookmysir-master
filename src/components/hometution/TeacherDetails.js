@@ -1,9 +1,17 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import '../../assets/styles/style.css';
 
 const TeacherDetails = ({ nextStep, prevStep, handleChange, values }) => {
-  const [selectedClasses, setSelectedClasses] = useState([]);
-  const [selectedEnggTypes, setSelectedEnggTypes] = useState([]);
+  const [selectedClasses, setSelectedClasses] = useState(values.selectedClasses || []);
+  const [selectedEnggTypes, setSelectedEnggTypes] = useState(values.selectedEnggTypes || []);
+
+  useEffect(() => {
+    handleChange('selectedClasses')({ target: { value: selectedClasses } });
+  }, [handleChange, selectedClasses]);
+
+  useEffect(() => {
+    handleChange('selectedEnggTypes')({ target: { value: selectedEnggTypes } });
+  }, [handleChange, selectedEnggTypes]);
 
   const handleClassChange = (e) => {
     const className = e.target.name;
@@ -12,7 +20,6 @@ const TeacherDetails = ({ nextStep, prevStep, handleChange, values }) => {
     } else {
       setSelectedClasses(selectedClasses.filter(c => c !== className));
     }
-    handleChange('selectedClasses')({ target: { value: selectedClasses } });
   };
 
   const handleEnggChange = (e) => {
@@ -22,7 +29,6 @@ const TeacherDetails = ({ nextStep, prevStep, handleChange, values }) => {
     } else {
       setSelectedEnggTypes(selectedEnggTypes.filter(e => e !== enggType));
     }
-    handleChange('selectedEnggTypes')({ target: { value: selectedEnggTypes } });
   };
 
   return (
@@ -37,6 +43,7 @@ const TeacherDetails = ({ nextStep, prevStep, handleChange, values }) => {
               type="checkbox"
               name={`class${classNum}`}
               id={`class${classNum}`}
+              checked={selectedClasses.includes(`class${classNum}`)}
               onChange={handleClassChange}
             />
             <label htmlFor={`class${classNum}`}> Class {classNum}</label> <br />
@@ -50,6 +57,7 @@ const TeacherDetails = ({ nextStep, prevStep, handleChange, values }) => {
           type="checkbox"
           name="diploma"
           id="diploma"
+          checked={selectedEnggTypes.includes('diploma')}
           onChange={handleEnggChange}
         />
         <label htmlFor="diploma"> Engineering Diploma</label> <br />
@@ -57,6 +65,7 @@ const TeacherDetails = ({ nextStep, prevStep, handleChange, values }) => {
           type="checkbox"
           name="degree"
           id="degree"
+          checked={selectedEnggTypes.includes('degree')}
           onChange={handleEnggChange}
         />
         <label htmlFor="degree"> Engineering Degree</label> <br />

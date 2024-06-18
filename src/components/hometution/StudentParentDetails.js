@@ -1,21 +1,7 @@
-// StudentParentDetails.js
-
-import React, { useState } from 'react';
+import React from 'react';
 import '../../assets/styles/style.css';
 
 function StudentParentDetails({ nextStep, prevStep, handleChange, values }) {
-  const [selectedClass, setSelectedClass] = useState('');
-  const [selectedEngg, setSelectedEngg] = useState('');
-
-  const handleClassChange = (e) => {
-    setSelectedClass(e.target.value);
-    handleChange('class')(e); // Update parent state
-  };
-
-  const handleEnggChange = (e) => {
-    setSelectedEngg(e.target.value);
-    handleChange('engg')(e); // Update parent state
-  };
 
   return (
     <div className='ml-8'>
@@ -25,8 +11,8 @@ function StudentParentDetails({ nextStep, prevStep, handleChange, values }) {
         name="class"
         id="class"
         className='styledInput mb-6'
-        value={selectedClass}
-        onChange={handleClassChange}
+        value={values.class}
+        onChange={handleChange('class')}
       >
         <option value="">Select Class</option>
         <option value="1">Class 1</option>
@@ -48,8 +34,8 @@ function StudentParentDetails({ nextStep, prevStep, handleChange, values }) {
         name="engg"
         id="engg"
         className='styledInput mb-6'
-        value={selectedEngg}
-        onChange={handleEnggChange}
+        value={values.engg}
+        onChange={handleChange('engg')}
       >
         <option value="">Select Type</option>
         <option value="degree">Engineering Degree</option>

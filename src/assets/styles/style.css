@@ -356,7 +356,17 @@
     border-radius: 5px;
     font-size: 20px;
 }
+  
+  .modal_content {
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+  }
 
+  .modal_image {
+    margin: 0 auto 10px; 
+  }
+  
 
 /* Media Queries */
 @media (max-width: 768px) {

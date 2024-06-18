@@ -122,39 +122,38 @@
 }
 
 /* COURSE DETAILS */
-/* courses.css */
 .course_hero {
   background-color: hsl(170, 75%, 41%);
-  width: 100%; /* Change from fixed width to 100% */
-  height: auto; /* Change to auto to adapt height based on content */
-  padding: 20px; /* Add padding for better spacing */
-  box-sizing: border-box; /* Ensure padding is included in the width calculation */
+  width: 100%; 
+  height: auto; 
+  padding: 20px; 
+  box-sizing: border-box; 
 }
 
 .course_card {
   background-color: white !important;
-  width: 100%; /* Make width 100% to take full width in smaller screens */
-  max-width: 402px; /* Maintain max width for larger screens */
-  height: auto; /* Auto height for content adaptability */
-  margin: 20px auto; /* Center align with margin */
+  width: 100%; 
+  max-width: 402px; 
+  height: auto; 
+  margin: 20px auto; 
   border-radius: 20px;
-  padding: 20px; /* Add padding for inner spacing */
-  box-sizing: border-box; /* Ensure padding is included in width calculation */
+  padding: 20px; 
+ 
 }
 
 .course_card img {
-  width: 100%; /* Make image width 100% for responsive scaling */
-  margin-top: -20px;
-  border-radius: 20px 20px 0 0; /* Round top corners */
+  width: 100%; 
+  border-radius: 20px;
 }
 
 .add_to_cart_button {
   background-color: hsla(351, 83%, 61%, 1);
-  padding: 10px 20px; /* Adjust padding for better button size */
+  padding: 10px 100px; 
   border-radius: 5px;
-  text-align: center; /* Center align text */
-  display: inline-block; /* Ensure it's inline-block for proper sizing */
-  margin-top: 20px; /* Add margin for spacing */
+  text-align: center; 
+  display: inline-block; 
+  margin-top: 20px; 
+  font-weight: bold;
 }
 
 .course_detail_heading {
@@ -191,4 +190,40 @@
     padding: 10px 15px; /* Adjust padding for better fit */
     font-size: 16px; /* Adjust font size */
   }
+}
+
+
+/* COURSE VIDEO ACCORDIAN */
+/* Example CSS for Accordion */
+
+/* Container for the accordion */
+.accordion-container {
+  width: 100%;
+  max-width: 600px; /* Adjust as needed */
+  margin: 0 auto;
+  border: 1px solid #ddd;
+}
+
+/* Individual accordion item */
+.accordion-item {
+  border-bottom: 1px solid #ddd;
+}
+
+/* Header of each accordion item */
+.accordion-header {
+  background-color: #f0f0f0;
+  padding: 10px;
+  margin: 0;
+  cursor: pointer;
+}
+
+/* Body of each accordion item */
+.accordion-body {
+  padding: 10px;
+  display: none; /* Hidden by default */
+}
+
+/* Show accordion body when item is active */
+.accordion-item.active .accordion-body {
+  display: block;
 }
