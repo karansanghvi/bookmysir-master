@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { firestore } from "../../firebase";
+import VideoModal from './VideoModal'; 
 
-const CourseContentAccordian = ({ courseName }) => {
+const CourseContentAccordion = ({ courseName }) => {
   const [accordions, setAccordions] = useState([]);
+  const [showVideoModal, setShowVideoModal] = useState(false);
+  const [videoUrls, setVideoUrls] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -27,6 +30,11 @@ const CourseContentAccordian = ({ courseName }) => {
       icon.classList.add("rotate-180");
     }
   };
+
+  // const handleVideoClick = (urls) => {
+  //   setVideoUrls(urls);
+  //   setShowVideoModal(true);
+  // };
 
   return (
     <div id="accordion-collapse" data-accordion="collapse" className="md:mr-32">
@@ -69,12 +77,33 @@ const CourseContentAccordian = ({ courseName }) => {
           >
             <div className="p-5">
               <p className="mb-2 text-black">{accordion.content}</p>
+              <div>
+                {accordion.videoUrls.map((url, idx) => (
+                  <div key={idx}>
+                    <a
+                      href={url}
+                      className="text-blue-500 underline block mb-2"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      Video {idx + 1}
+                    </a>
+                  </div>
+                ))}
+              </div>
+              {/* <button
+                className="text-blue-500 underline"
+                onClick={() => handleVideoClick(accordion.videoUrls)}
+              >
+                View Videos
+              </button> */}
             </div>
           </div>
         </div>
       ))}
+      <VideoModal show={showVideoModal} onClose={() => setShowVideoModal(false)} videoUrls={videoUrls} />
     </div>
   );
 };
 
-export default CourseContentAccordian;
+export default CourseContentAccordion;

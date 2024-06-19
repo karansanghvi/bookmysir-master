@@ -1,12 +1,12 @@
 import React, { useContext } from 'react';
 import { Link, useParams } from 'react-router-dom';
+import ReactPlayer from 'react-player';
 import { CartContext } from '../components/contexts/CartContext';
-import '../assets/styles/courses.css';
-import course_preview from '../assets/images/dan-cristian-padure-h3kuhYUCE9A-unsplash.jpg';
 import video from '../assets/images/ph_video.png';
 import downloadable_resources from '../assets/images/ic_baseline-download.png';
 import mobile from '../assets/images/uiw_mobile.png';
 import CourseContentAccordian from '../components/courses/CourseContentAccordian';
+import '../assets/styles/courses.css';
 
 const CourseDetail = ({ courses }) => {
   const { name } = useParams();
@@ -30,12 +30,16 @@ const CourseDetail = ({ courses }) => {
                           <div>
                               <h1 className='md:text-6xl font-bold mb-4 md:mr-0 mr-120 text-4xl'>{course.name}</h1>
                               <p className='mb-4'>{course.description}</p>
-                              <p><b>Hours:</b> {course.hours}</p>
-                              <p><b>Requirements:</b> {course.requirements}</p>
-                              <p><b>Instructor Name:</b> {course.instructor}</p>
+                              
                           </div>
                           <div className='course_card'>
-                              <img src={course_preview} alt="" className='p-4' />
+                              <ReactPlayer
+                                url={course.videoUrl} 
+                                width='100%'
+                                height='auto'
+                                controls
+                                playing
+                            />
                               <p className='text-sm font-normal text-center'>Preview this course</p>
                               <h1 className='md:ml-6 font-semibold text-2xl'>₹500</h1>
                               <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
@@ -65,18 +69,29 @@ const CourseDetail = ({ courses }) => {
                   </div>
               </div>
 
+              <div className='course_content md:pl-32 mt-20 md:pr-32'>
+                <h1 className='md:text-4xl font-bold'>Description:</h1>
+                <p className='text-justify'>{course.bigDescription}</p>
+              </div>
+
+              <div className='course_content md:pl-32 mt-20 md:pr-32'>
+                  <h1 className='md:text-4xl font-bold'>Requirements:</h1>
+                  <p className='text-justify'>{course.requirements}</p>
+              </div>
+
               <div className='course_content md:pl-32 mt-20'>
                   <h1 className='md:text-4xl font-bold'>Course Content:</h1>
                   <CourseContentAccordian courseName={course.name} />
               </div>
 
               <div className='course_content md:pl-32 mt-20'>
-                  <h1 className='md:text-4xl font-bold'>Requirements:</h1>
-                  {/* <ul className="list-disc list-inside">
-                      {course.requirements.map((requirement, index) => (
-                          <li key={index}>{requirement}</li>
-                      ))}
-                  </ul> */}
+                <h1 className='md:text-4xl font-bold'>Course Resources:</h1>
+              </div>
+
+              <div className='course_content md:pl-32 mt-20'>
+                <h1 className='md:text-4xl font-bold'>Meet Your Instructor</h1>
+                <p><b>{course.instructor}</b></p>
+                <p className='text-justify'>{course.instructorDescription}</p>
               </div>
           </section>
       </>
