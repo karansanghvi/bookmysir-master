@@ -60,8 +60,14 @@ function Profile() {
     if (userId) {
       try {
         await updateDoc(doc(firestore, "signup", userId), {
-          [field]: userData[field]
+          [field]: userData[field],
+          address, // Include address in the update
+          schoolName: school.name, // Include school name in the update
+          schoolMarks: school.marks, // Include school marks in the update
+          collegeName: college.name, // Include college name in the update
+          collegeMarks: college.marks // Include college marks in the update
         });
+        alert("Changes saved successfully!");
       } catch (e) {
         console.error("Error updating user data: ", e);
       }

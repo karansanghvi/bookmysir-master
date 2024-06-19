@@ -31,10 +31,10 @@ const CourseContentAccordion = ({ courseName }) => {
     }
   };
 
-  // const handleVideoClick = (urls) => {
-  //   setVideoUrls(urls);
-  //   setShowVideoModal(true);
-  // };
+  const handleVideoClick = (urls) => {
+    setVideoUrls(urls);
+    setShowVideoModal(true);
+  };
 
   return (
     <div id="accordion-collapse" data-accordion="collapse" className="md:mr-32">
@@ -91,12 +91,12 @@ const CourseContentAccordion = ({ courseName }) => {
                   </div>
                 ))}
               </div>
-              {/* <button
-                className="text-blue-500 underline"
+              <button
+                className="text-blue-500 underline sr-only"
                 onClick={() => handleVideoClick(accordion.videoUrls)}
               >
                 View Videos
-              </button> */}
+              </button>
             </div>
           </div>
         </div>

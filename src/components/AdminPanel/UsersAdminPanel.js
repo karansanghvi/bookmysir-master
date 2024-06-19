@@ -8,8 +8,8 @@ export default function UsersAdminPanel() {
   const [users, setUsers] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 20;
-  const usersRef = collection(firestore, 'login');
-
+  const usersRef = collection(firestore, 'signup'); 
+  
   useEffect(() => {
     const fetchUsers = async () => {
       try {
@@ -35,7 +35,17 @@ export default function UsersAdminPanel() {
   };
 
   const downloadData = () => {
-    const dataToExport = users.map(({ id, name, email, phoneNumber }) => ({ id, name, email, phoneNumber }));
+    const dataToExport = users.map(({ id, name, email, phoneNumber, address, schoolName, schoolMarks, collegeName, collegeMarks }) => ({
+      id,
+      name,
+      email,
+      phoneNumber,
+      address,
+      schoolName,
+      schoolMarks,
+      collegeName,
+      collegeMarks
+    }));
     const worksheet = XLSX.utils.json_to_sheet(dataToExport);
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, "Users");
@@ -70,6 +80,11 @@ export default function UsersAdminPanel() {
             <th>Name</th>
             <th>Email Address</th>
             <th>Phone Number</th>
+            <th>Address</th> {/* New column */}
+            <th>School Name</th> {/* New column */}
+            <th>Marks in School</th> {/* New column */}
+            <th>College Name</th> {/* New column */}
+            <th>Marks in College</th> {/* New column */}
             <th>Remove User</th>
           </tr>
         </thead>
@@ -80,6 +95,11 @@ export default function UsersAdminPanel() {
               <td>{user.name}</td>
               <td>{user.email}</td>
               <td>{user.phoneNumber}</td>
+              <td>{user.address}</td>
+              <td>{user.schoolName}</td> 
+              <td>{user.schoolMarks}</td> 
+              <td>{user.collegeName}</td> 
+              <td>{user.collegeMarks}</td> 
               <td>
                 <button onClick={() => handleRemoveUser(user.id)}>Remove</button>
               </td>
