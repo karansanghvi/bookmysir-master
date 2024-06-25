@@ -20,15 +20,22 @@ export default function HomeTution() {
     email: '',
     phoneNumber: '',
     role: '',
-    address: '',
+    flat: '',
+    building: '',
+    street: '',
+    locality: '',
+    pin: '',
+    landmark: '',
+    city: '',
+    state: '',
     typeOfTuition: '',
     class: '',
     engg: '',
     selectedClasses: [], 
     selectedEnggTypes: [],
     selectedSubjects: [],
-    selectedSemesters: [], 
-    selectedBranches: []  
+    selectedSemester: [], 
+    selectedBranch: []  
   });
 
   const nextStep = async () => {

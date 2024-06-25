@@ -27,7 +27,7 @@ function Footer() {
           <i className="ri-mail-fill" style={{ fontSize: '20px', marginRight: '10px' }}></i>
           <Link to={`mailto:${emailAddress}`} style={{fontSize: '20px', fontWeight: '500'}}>info@bookmysir.com</Link>
           <i className="ri-phone-fill md:ml-40 ml-0" style={{ fontSize: '20px' }}></i>
-          <Link to={`tel:${phoneNumber}}`} style={{fontSize: '20px', fontWeight: '500'}}>+91-88500839932</Link>
+          <Link to={`tel:${phoneNumber}`} style={{fontSize: '20px', fontWeight: '500'}}>+91-88500839932</Link>
         </div>
         <div className="h-px bg-black md:ml-32 md:mr-32 mt-10"></div>
         <div className='footer_nav_copyright mt-4'>

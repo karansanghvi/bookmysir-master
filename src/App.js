@@ -21,6 +21,7 @@ import MyLearning from './pages/MyLearning';
 import CoursesCompleted from './pages/CoursesCompleted';
 import Profile from './pages/Profile';
 import StudentDetails from './pages/StudentDetails';
+import Checkout from './pages/Checkout';
 
 function App() {
   const [courses, setCourses] = useState(() => {
@@ -58,6 +59,7 @@ function App() {
         <Route path="coursescompleted" element={<CoursesCompleted/>} />
         <Route path="profile" element={<Profile/>}/>
         <Route path="studentdetails" element={<StudentDetails/>} />
+        <Route path="checkout" element={<Checkout/>} />
       </Routes>
       {!isAdminRoute && <Footer />}
     </>

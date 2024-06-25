@@ -79,7 +79,14 @@ function HomeTutionAdminPanel() {
             <th>Engineering Semester</th>
             <th>Engineering Branch</th>
             <th>Type of Tuition</th>
-            <th>Address</th>
+            <th>Flat Number</th>
+            <th>Building Name</th>
+            <th>Street Name</th>
+            <th>Locality</th>
+            <th>Pin Code</th>
+            <th>Landmark</th>
+            <th>City</th>
+            <th>State</th>
             <th>Remove Tuition</th>
           </tr>
         </thead>
@@ -95,10 +102,17 @@ function HomeTutionAdminPanel() {
               <td>{tuition.selectedClasses}</td>
               <td>{tuition.selectedEnggTypes}</td>
               <td>{tuition.selectedSubjects}</td>
-              <td>{tuition.selectedSemesters}</td>
-              <td>{tuition.selectedBranches}</td>
+              <td>{tuition.selectedSemester}</td>
+              <td>{tuition.selectedBranch}</td>
               <td>{tuition.typeOfTuition}</td>
-              <td>{tuition.address}</td>
+              <td>{tuition.flat}</td>
+              <td>{tuition.building}</td>
+              <td>{tuition.street}</td>
+              <td>{tuition.locality}</td>
+              <td>{tuition.pin}</td>
+              <td>{tuition.landmark}</td>
+              <td>{tuition.city}</td>
+              <td>{tuition.state}</td>
               <td>
                 <button onClick={() => handleRemoveTuition(tuition.id)}>Remove</button>
               </td>

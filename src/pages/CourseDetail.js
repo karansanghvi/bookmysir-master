@@ -1,5 +1,5 @@
-import React, { useContext } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import React, { useContext, useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import ReactPlayer from 'react-player';
 import { CartContext } from '../components/contexts/CartContext';
 import video from '../assets/images/ph_video.png';
@@ -9,16 +9,25 @@ import CourseContentAccordian from '../components/courses/CourseContentAccordian
 import '../assets/styles/courses.css';
 
 const CourseDetail = ({ courses }) => {
+
   const { name } = useParams();
+  const navigate = useNavigate();  
   const { addToCart } = useContext(CartContext);
   const course = courses.find((course) => course.name === name);
+  const [showModal, setShowModal] = useState(false);
+  const isLoggedIn = localStorage.getItem('userID');
 
   if (!course) {
       return <div className='mt-32'>Course not found</div>;
   }
 
   const handleAddToCart = () => {
-      addToCart({ ...course, price: 500 });
+    if (isLoggedIn) {
+        addToCart({ ...course, price: 500 });
+        navigate('/cart');
+    } else {
+        setShowModal(true);
+    }
   };
 
   return (
@@ -43,7 +52,9 @@ const CourseDetail = ({ courses }) => {
                               <p className='text-sm font-normal text-center'>Preview this course</p>
                               <h1 className='md:ml-6 font-semibold text-2xl'>₹500</h1>
                               <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
-                                  <Link to="/cart" onClick={handleAddToCart} className='add_to_cart_button'>Add To Cart</Link>
+                                  <button onClick={handleAddToCart} className='add_to_cart_button'>
+                                    Add To Cart
+                                  </button>
                               </div>
                               <p className='text-sm font-normal text-center mt-2'>Full Lifetime Access</p>
                           </div>
@@ -94,6 +105,17 @@ const CourseDetail = ({ courses }) => {
                 <p className='text-justify'>{course.instructorDescription}</p>
               </div>
           </section>
+
+          {showModal && (
+            <div className='add_to_cart_modal'>
+                <div className='add_to_cart_modal_content'>
+                    <h1 className='mb-2'>Please log in to buy the course</h1>
+                    <button onClick={() => setShowModal(false)} className='font-bold'>
+                        Close
+                    </button>
+                </div>
+            </div>
+          )}
       </>
   );
 };
