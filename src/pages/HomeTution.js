@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
-import { collection, addDoc } from 'firebase/firestore';
+import React, { useState, useEffect, useCallback } from 'react';
+import { doc, setDoc } from 'firebase/firestore';
+import emailjs from 'emailjs-com';
 import { firestore } from '../firebase';
 import Stepper from '../components/hometution/Stepper';
 import PersonalDetailsStep from '../components/hometution/PersonalDetailsStep';
@@ -10,6 +11,7 @@ import LocationStep from '../components/hometution/LocationStep';
 import StudentParentDetails from '../components/hometution/StudentParentDetails';
 import TeacherDetails from '../components/hometution/TeacherDetails';
 import SubmissionModal from '../components/hometution/SubmissionModal';
+import { useDebounce } from '../hooks/useDebounce';
 import '../assets/styles/style.css';
 
 export default function HomeTution() {
@@ -31,12 +33,29 @@ export default function HomeTution() {
     typeOfTuition: '',
     class: '',
     engg: '',
-    selectedClasses: [], 
+    selectedClasses: [],
     selectedEnggTypes: [],
     selectedSubjects: [],
-    selectedSemester: [], 
-    selectedBranch: []  
+    selectedSemester: [],
+    selectedBranch: []
   });
+
+  const debouncedFormData = useDebounce(formData, 500);
+
+  const saveToFirestore = useCallback(async () => {
+    try {
+      if (debouncedFormData.email) {
+        const docRef = doc(firestore, 'hometution', debouncedFormData.email);
+        await setDoc(docRef, debouncedFormData, { merge: true });
+      }
+    } catch (e) {
+      console.error("Error adding document: ", e);
+    }
+  }, [debouncedFormData]);
+
+  useEffect(() => {
+    saveToFirestore();
+  }, [debouncedFormData, saveToFirestore]);
 
   const nextStep = async () => {
     switch (currentStep) {
@@ -61,7 +80,8 @@ export default function HomeTution() {
         setCurrentStep(7);
         break;
       case 7:
-        await saveToFirestore();
+        await saveToFirestore(true);
+        await sendEmail();
         setShowModal(true);
         break;
       default:
@@ -81,12 +101,12 @@ export default function HomeTution() {
     setShowModal(false);
   };
 
-  const saveToFirestore = async () => {
+  const sendEmail = async () => {
     try {
-      const docRef = await addDoc(collection(firestore, 'hometution'), formData);
-      console.log("Document written with ID: ", docRef.id);
-    } catch (e) {
-      console.error("Error adding document: ", e);
+      await emailjs.send('service_j7yoz1s', 'template_b5brxra', formData, 'GpzeSez42c4S4GfBo');
+      console.log('Email sent successfully');
+    } catch (error) {
+      console.error('Error sending email:', error);
     }
   };
 
@@ -166,7 +186,7 @@ export default function HomeTution() {
           Book Your <span className='home_text'>Home</span> Tutions
         </h1>
         <div className='md:w-120 mx-auto shadow-xl rounded-2xl bg-white md:ml-32 ml-4 md:mr-32 p-8'>
-          <Stepper currentStep={currentStep} steps={7} /> 
+          <Stepper currentStep={currentStep} steps={7} />
           {renderStep()}
           {showModal && <SubmissionModal closeModal={closeModal} />}
         </div>
