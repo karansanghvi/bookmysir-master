@@ -266,3 +266,19 @@
   border-radius: 10px;
   margin-top: 10px;
 }
+
+.checkout_title {
+  font-size: 96px;
+  font-weight: 700;
+}
+
+@media (max-width: 768px) {
+  .checkout_title {
+    font-size: 66px;
+  }
+
+  .checkout_button {
+    padding: 10px 20px;
+    font-size: 20px;
+  }
+}
