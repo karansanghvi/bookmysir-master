@@ -5,7 +5,7 @@ import 'remixicon/fonts/remixicon.css';
 
 function Footer() {
 
-  const emailAddress = "karansanghvi1303@gmail.com";
+  const emailAddress = "bookmysir@gmail.com";
   const phoneNumber = "+91-88500839932"
 
   return (
@@ -15,13 +15,13 @@ function Footer() {
         <div className='footer_nav md:ml-0 ml-10'>
             <Link to="/" className='link'>Home</Link>
             <Link to="/aboutus" className='link'>About Us</Link>
-            <Link to="/courses" className='link'>Courses</Link>
+            {/* <Link to="/courses" className='link'>Courses</Link> */}
             <Link to="/hometution" className='link'>Home Tutions</Link>
-            <Link to="/contactus" className='link'>Contact Us</Link>
+            {/* <Link to="/contactus" className='link'>Contact Us</Link> */}
         </div>
         <div className='footer_nav mb-8 md:ml-0 ml-10'>
-            <Link to="/termsandconditions" className='link'>Terms & Conditions</Link>
-            <Link to="privacypolicy" className='link'>Privacy Policy</Link>
+            {/* <Link to="/termsandconditions" className='link'>Terms & Conditions</Link>
+            <Link to="privacypolicy" className='link'>Privacy Policy</Link> */}
         </div>
         <div className='footer_nav_contact md:ml-0 ml-10'>
           <i className="ri-mail-fill" style={{ fontSize: '20px', marginRight: '10px' }}></i>
