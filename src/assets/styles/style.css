@@ -197,6 +197,9 @@
     .apptext {
         font-size: 58px;
     }
+    .coursecard .coursetitle {
+        font-size: 30px;
+    }
 }
 
 .phone {
