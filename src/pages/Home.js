@@ -153,6 +153,11 @@ function Home() {
               <FaCheck className='w-4 h-4' />
               <p>HSC Board</p>
             </div>
+            <>
+              <Link to="/hometution">
+                <h1 className='text-center font-bold mt-4 mb-4 text-xl'>Know More</h1>
+              </Link>
+            </>
           </div>
           <div className='coursecard flex flex-col mb-4'>
             <h1 className='coursetitle text-center'>11th & 12th Standard</h1>
@@ -166,6 +171,11 @@ function Home() {
               <FaCheck className='w-4 h-4' />
               <p>CBSE Board</p>
             </div>
+            <>
+              <Link to="/hometution">
+                <h1 className='text-center font-bold text-xl'>Know More</h1>
+              </Link>
+            </>
           </div>
           <div className='coursecard flex flex-col mb-4'>
             <h1 className='coursetitle text-center'>Engineering</h1>
@@ -193,6 +203,11 @@ function Home() {
             <div className='flex items-start space-x-4 ml-10 md:mb-0 mb-4'>
               <FaCheck className='w-4 h-4' />
               <p>Automobile Engineering</p>
+            </div>
+            <div className='md:mt-8'>
+              <Link to="/hometution">
+                <h1 className='text-center font-bold text-xl'>Know More</h1>
+              </Link>
             </div>
           </div>
         </div>

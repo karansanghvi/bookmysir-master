@@ -6,12 +6,12 @@ import { getStorage } from "firebase/storage";
 import { getAuth } from "firebase/auth"; // Import auth module
 
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_AUTH_DOMAIN",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_STORAGE_BUCKET",
-  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-  appId: "YOUR_APP_ID"
+  apiKey: "AIzaSyBiMDxx-O7mywt7D8mlbnqwWpEN7xOBTWk",
+  authDomain: "bookmysir-ea46a.firebaseapp.com",
+  projectId: "bookmysir-ea46a",
+  storageBucket: "bookmysir-ea46a.appspot.com",
+  messagingSenderId: "970389774474",
+  appId: "1:970389774474:web:164050a28b007630210d73"
 };
 
 // Initialize Firebase
