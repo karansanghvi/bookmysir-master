@@ -11,7 +11,6 @@ import TermsAndConditions from './pages/TermsAndConditions';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import Footer from './pages/Footer';
 import HomeTution from './pages/HomeTution';
-import BookDemoLecture from './pages/BookDemoLecture';
 import AdminPage from './pages/AdminPage';
 import CourseDetail from './pages/CourseDetail';
 import { useEffect, useState } from 'react';
@@ -52,10 +51,9 @@ function App() {
         <Route path="hometution" element={<HomeTution />} />
         {/* <Route path="contact" element={<Contact />} /> */}
         <Route path="/" element={<Contact />} />
-        {/* <Route path="demolecture" element={<BookDemoLecture />} />
+        {/* 
         <Route path="login" element={<Login />} />
         <Route path="signup" element={<Signup />} /> */}
-        <Route path="/" element={<BookDemoLecture />} />
         <Route path="/" element={<Login />} />
         <Route path="/" element={<Signup />} />
         <Route path="/" element={<TermsAndConditions />} />

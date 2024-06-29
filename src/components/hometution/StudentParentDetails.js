@@ -4,9 +4,9 @@ import '../../assets/styles/style.css';
 function StudentParentDetails({ nextStep, prevStep, handleChange, values }) {
 
   return (
-    <div className='ml-8'>
+    <div className=''>
       <h1 className='personal_details_title'>Student/Parent Details</h1>
-      <h1 className='font-medium'>Select Class:</h1>
+      <h1 className='font-medium'>Select Class/Engineering:</h1>
       <select
         name="class"
         id="class"
@@ -27,19 +27,8 @@ function StudentParentDetails({ nextStep, prevStep, handleChange, values }) {
         <option value="10">Class 10</option>
         <option value="11">Class 11</option>
         <option value="12">Class 12</option>
-      </select>
-
-      <h1 className='font-medium'>Select Engineering:</h1>
-      <select
-        name="engg"
-        id="engg"
-        className='styledInput mb-6'
-        value={values.engg}
-        onChange={handleChange('engg')}
-      >
-        <option value="">Select Type</option>
-        <option value="degree">Engineering Degree</option>
         <option value="diploma">Engineering Diploma</option>
+        <option value="degree">Engineering Degree</option>
       </select>
 
       <div className='home_buttons'>

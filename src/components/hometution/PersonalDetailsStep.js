@@ -1,43 +1,59 @@
-import React from 'react';
-import '../../assets/styles/style.css';
+import React, { useState } from 'react';
 
 const PersonalDetailsStep = ({ nextStep, handleChange, values }) => {
+  const [phoneError, setPhoneError] = useState('');
+
+  const validatePhoneNumber = (phoneNumber) => {
+    // Regular expression for validating phone number
+    const phoneRegex = /^[0-9]{10}$/;
+    return phoneRegex.test(phoneNumber);
+  };
+
+  const handlePhoneNumberChange = (event) => {
+    const { value } = event.target;
+    handleChange('phoneNumber')(event);
+
+    if (!validatePhoneNumber(value)) {
+      setPhoneError('Invalid phone number. Please enter a 10-digit phone number.');
+    } else {
+      setPhoneError('');
+    }
+  };
+
   return (
     <div>
-      <h1 className='personal_details_title ml-8'>Personal Details</h1>
+      <h1 className='personal_details_title'>Personal Details</h1>
       <form>
-        <h1 className='mt-4 ml-8'>Enter Full Name:</h1>
+        <h1 className='mt-4'>Enter Full Name:</h1>
         <input 
           type="text" 
           name="name"
           value={values.name}
           onChange={handleChange('name')}
-          className="ml-8 styledInput"
+          className="styledInput"
           placeholder='Name'
           required
         />
-        <h1 className='mt-4 ml-8'>Enter Email Address:</h1>
+        <h1 className='mt-4'>Enter Phone Number:</h1>
         <input 
-          type="email" 
-          name="email"
-          value={values.email}
-          onChange={handleChange('email')}
-          className="ml-8 styledInput"
-          placeholder='Email'
-        />
-        <h1 className='mt-4 ml-8'>Enter Phone Number:</h1>
-        <input 
-          type="tel" 
+          type="text" 
           name="phoneNumber"
           value={values.phoneNumber}
-          onChange={handleChange('phoneNumber')}
-          className="ml-8 styledInput"
+          onChange={handlePhoneNumberChange}
+          className="styledInput"
           placeholder='Phone Number'
           required
         />
+        {phoneError && <p className="error-message">{phoneError}</p>}
       </form>
       <br />
-      <button onClick={nextStep} className='next_button ml-8 mt-4'>Next</button>
+      <button 
+        onClick={nextStep} 
+        className='next_button ml-8 mt-4'
+        disabled={phoneError !== ''}
+      >
+        Next
+      </button>
     </div>
   );
 };

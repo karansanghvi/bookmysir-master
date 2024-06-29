@@ -32,7 +32,7 @@ const TeacherDetails = ({ nextStep, prevStep, handleChange, values }) => {
   };
 
   return (
-    <div className='ml-8'>
+    <div className=''>
       <h1 className='personal_details_title'>Teacher Details</h1>
 
       <div>

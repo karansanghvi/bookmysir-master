@@ -10,7 +10,7 @@ const SubmissionModal = ({ closeModal }) => {
     const timer = setTimeout(() => {
       closeModal();
       navigate('/'); 
-    }, 7000);
+    }, 3000);
     return () => clearTimeout(timer);
   }, [closeModal, navigate]);
 

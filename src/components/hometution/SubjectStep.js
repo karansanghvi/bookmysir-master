@@ -1,22 +1,21 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react';
 
 export default function SubjectStep({ nextStep, prevStep, handleChange, values }) {
-
-  const [selectedSubjects, setSelectedSubject] = useState(values.selectedSubject || []);
+  const [selectedSubjects, setSelectedSubject] = useState(values.selectedSubjects || []);
   const [selectedSemester, setSelectedSemester] = useState(values.selectedSemester || []);
   const [selectedBranch, setSelectedBranch] = useState(values.selectedBranch || []);
 
   useEffect(() => {
     handleChange('selectedSubjects')({ target: { value: selectedSubjects } });
-  }, [handleChange, selectedSubjects]);
+  }, [selectedSubjects, handleChange]);
 
   useEffect(() => {
     handleChange('selectedSemester')({ target: { value: selectedSemester } });
-  }, [handleChange, selectedSemester]);
+  }, [selectedSemester, handleChange]);
 
   useEffect(() => {
     handleChange('selectedBranch')({ target: { value: selectedBranch } });
-  }, [handleChange, selectedBranch]);
+  }, [selectedBranch, handleChange]);
 
   const handleSemesterChange = (e) => {
     const semesterName = e.target.name;
@@ -44,59 +43,70 @@ export default function SubjectStep({ nextStep, prevStep, handleChange, values }
       setSelectedBranch(selectedBranch.filter(c => c !== branchName));
     }
   };
-  
+
+  const renderSubjectSelection = () => {
+    if (['diploma', 'degree'].includes(values.class)) {
+      return (
+        <>
+          <h1 className='mt-4 font-medium'>Select Engineering Semester:</h1>
+          {['1', '2', '3', '4', '5', '6', '7', '8'].map(semesterNum => (
+            <React.Fragment key={`semester${semesterNum}`}>
+              <input
+                type="checkbox"
+                name={`semester${semesterNum}`}
+                id={`semester${semesterNum}`}
+                checked={selectedSemester.includes(`semester${semesterNum}`)}
+                onChange={handleSemesterChange}
+              />
+              <label htmlFor={`semester${semesterNum}`}> Semester {semesterNum}</label> <br />
+            </React.Fragment>
+          ))}
+
+          <h1 className='mt-4 font-medium'>Select Engineering Branch:</h1>
+          {['Mechanical', 'Civil', 'Production', 'Automobile', 'Electronics & Telecommunications', 'Electronics', 'Electrical', 'Computer', 'Information Technology'].map(branchNum => (
+            <React.Fragment key={`branch${branchNum}`}>
+              <input
+                type="checkbox"
+                name={`branch${branchNum}`}
+                id={`branch${branchNum}`}
+                checked={selectedBranch.includes(`branch${branchNum}`)}
+                onChange={handleBranchChange}
+              />
+              <label htmlFor={`branch${branchNum}`}>{branchNum} Engineering</label> <br />
+            </React.Fragment>
+          ))}
+        </>
+      );
+    } else {
+      return (
+        <>
+          <h1 className='mt-4 font-medium'>Select Subject:</h1>
+          {['Maths', 'English', 'Science', 'Physics', 'Chemistry', 'Biology', 'Marathi', 'Sanskrit', 'Other', 'All Subjects'].map(subjectNum => (
+            <React.Fragment key={`subject${subjectNum}`}>
+              <input
+                type="checkbox"
+                name={`subject${subjectNum}`}
+                id={`subject${subjectNum}`}
+                checked={selectedSubjects.includes(`subject${subjectNum}`)}
+                onChange={handleSubjectChange}
+              />
+              <label htmlFor={`subject${subjectNum}`}>{subjectNum}</label> <br />
+            </React.Fragment>
+          ))}
+        </>
+      );
+    }
+  };
+
   return (
-    <>
-     <div className='ml-8'>
+    <div className=''>
       <h1 className='personal_details_title'>Subject Details</h1>
-      <h1 className='mt-4 font-medium'>Select Subject:</h1>
-      {['Maths', 'English', 'Science', 'Physics', 'Chemistry', 'Biology', 'Marathi', 'Sanskrit', 'Other', 'All Subjects'].map(subjectNum => (
-          <React.Fragment key={`subject${subjectNum}`}>
-            <input
-              type="checkbox"
-              name={`subject${subjectNum}`}
-              id={`subject${subjectNum}`}
-              checked={selectedSubjects.includes(`subject${subjectNum}`)}
-              onChange={handleSubjectChange}
-            />
-            <label htmlFor={`subject${subjectNum}`}>{subjectNum}</label> <br />
-          </React.Fragment>
-        ))}
-
-      <h1 className='mt-4 font-medium'>Select Engineering Semester:</h1>
-      {['1', '2', '3', '4', '5', '6', '7', '8'].map(semesterNum => (
-          <React.Fragment key={`semester${semesterNum}`}>
-            <input
-              type="checkbox"
-              name={`semester${semesterNum}`}
-              id={`semester${semesterNum}`}
-              checked={selectedSemester.includes(`semester${semesterNum}`)}
-              onChange={handleSemesterChange}
-            />
-            <label htmlFor={`semester${semesterNum}`}> Semester {semesterNum}</label> <br />
-          </React.Fragment>
-        ))}
-
-      <h1 className='mt-4 font-medium'>Select Engineering Branch:</h1>
-      {['Mechanical', 'Civil', 'Production', 'Automobile', 'Electronics & Telecommunications', 'Electronics', 'Electrical', 'Computer', 'Information Technology'].map(branchNum => (
-        <React.Fragment key={`branch${branchNum}`}>
-          <input
-            type="checkbox"
-            name={`branch${branchNum}`}
-            id={`branch${branchNum}`}
-            checked={selectedBranch.includes(`branch${branchNum}`)}
-            onChange={handleBranchChange}
-          />
-          <label htmlFor={`branch${branchNum}`}>{branchNum} Engineering</label> <br />
-        </React.Fragment>
-      ))}
-
+      {renderSubjectSelection()}
       <br />
       <div className='home_buttons'>
         <button onClick={prevStep} className='prev_button'>Back</button>
         <button onClick={nextStep} className='next_button_two'>Next</button>
       </div>
-     </div> 
-    </>
-  )
+    </div>
+  );
 }

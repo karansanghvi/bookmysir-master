@@ -19,7 +19,7 @@ export default function HomeTution() {
   const [showModal, setShowModal] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
-    email: '',
+    // email: '',
     phoneNumber: '',
     role: '',
     flat: '',
@@ -32,7 +32,7 @@ export default function HomeTution() {
     state: '',
     typeOfTuition: '',
     class: '',
-    engg: '',
+    // engg: '',
     selectedClasses: [],
     selectedEnggTypes: [],
     selectedSubjects: [],

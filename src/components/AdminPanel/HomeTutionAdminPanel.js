@@ -35,8 +35,8 @@ function HomeTutionAdminPanel() {
   };
 
   const downloadData = () => {
-    const dataToExport = tuitions.map(({ id, name, email, phoneNumber, role, class: studentClass, engg, selectedClasses, selectedEnggTypes, selectedSubjects, selectedSemesters, selectedBranches, typeOfTuition, address }) => 
-      ({ id, name, email, phoneNumber, role, studentClass, engg, selectedClasses, selectedEnggTypes, selectedSubjects, selectedSemesters, selectedBranches, typeOfTuition, address }));
+    const dataToExport = tuitions.map(({ id, name, phoneNumber, role, class: studentClass, selectedClasses, selectedEnggTypes, selectedSubjects, selectedSemesters, selectedBranches, typeOfTuition, address }) => 
+      ({ id, name, phoneNumber, role, studentClass, selectedClasses, selectedEnggTypes, selectedSubjects, selectedSemesters, selectedBranches, typeOfTuition, address }));
     const worksheet = XLSX.utils.json_to_sheet(dataToExport);
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, "Home Tuitions");
@@ -68,11 +68,11 @@ function HomeTutionAdminPanel() {
         <thead>
           <tr>
             <th>Name</th>
-            <th>Email</th>
+            {/* <th>Email</th> */}
             <th>Phone Number</th>
             <th>Role</th>
             <th>Class (Student)</th>
-            <th>Engineering (Student)</th>
+            {/* <th>Engineering (Student)</th> */}
             <th>Class (Teacher)</th>
             <th>Engineering (Teacher)</th>
             <th>Subject</th>
@@ -94,11 +94,11 @@ function HomeTutionAdminPanel() {
           {currentTuitions.map((tuition) => (
             <tr key={tuition.id}>
               <td>{tuition.name}</td>
-              <td>{tuition.email}</td>
+              {/* <td>{tuition.email}</td> */}
               <td>{tuition.phoneNumber}</td>
               <td>{tuition.role}</td>
               <td>{tuition.class}</td>
-              <td>{tuition.engg}</td>
+              {/* <td>{tuition.engg}</td> */}
               <td>{tuition.selectedClasses}</td>
               <td>{tuition.selectedEnggTypes}</td>
               <td>{tuition.selectedSubjects}</td>

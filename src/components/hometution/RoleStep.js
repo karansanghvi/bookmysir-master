@@ -4,7 +4,7 @@ import '../../assets/styles/style.css';
 const RoleStep = ({ nextStep, prevStep, handleChange, values }) => {
   return (
     <div>
-      <h1 className='personal_details_title ml-8'>Role</h1>
+      <h1 className='personal_details_title '>Role</h1>
       <form>
         <div className='role'>
           <select 
