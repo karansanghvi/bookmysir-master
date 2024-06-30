@@ -3,41 +3,68 @@ import { Link } from 'react-router-dom';
 import { CartContext } from '../components/contexts/CartContext';
 import '../assets/styles/style.css';
 import '../assets/styles/courses.css';
-import axios from 'axios';
+import Razorpay from 'razorpay';
+import { firestore } from '../firebase';
 
 function Checkout() {
   const { cart, getTotalPrice } = useContext(CartContext);
 
-  const generateRazorpayOrder = async () => {
+  const studentDetails = JSON.parse(localStorage.getItem('studentDetails'));
+  
+  const handlePayment = async () => {
+    const razorpay = new Razorpay({
+      key_id: 'rzp_test_O3D0Wxoued9YVG',
+      key_secrent: 'jGfEwoslyetBQKMJbeWswfRH',
+    });
+
+    const options = {
+      amount: getTotalPrice * 100,
+      currency: 'INR',
+      reciept: 'bookmysir',
+      payment_capture: 1,
+    };
+
     try {
-      const response = await axios.post('YOUR_FIREBASE_FUNCTION_URL', {
-        amount: getTotalPrice(), // Pass total amount to Firebase Function
+      const response = await razorpay.orders.create(options);
+      console.log(response);
+
+      await firestore.collection('payments').add({
+        orderId: response.id,
+        amount: getTotalPrice,
+        status: 'pending',
+        createdAt: new Date(),
       });
-      const { data } = response;
-      
-      const options = {
-        key: 'rzp_test_gJkAnjADfg8Udi',
-        amount: getTotalPrice() * 100,
+
+      const razorpayOptions = {
+        key: 'rzp_test_O3D0Wxoued9YVG',
+        amount: getTotalPrice * 100,
         currency: 'INR',
-        name: 'Your Company Name',
-        description: 'Course Purchase',
-        order_id: data.id,
+        name: 'bookmysir',
+        description: 'payment for online course',
+        order_id: response.id,
         handler: function (response) {
-          alert(response.razorpay_payment_id);
-          alert(response.razorpay_order_id);
-          alert(response.razorpay_signature);
+          console.log(response);
+        },
+        prefill: {
+          name: 'Karan',
+          email: 'admin@gmail.com',
+          contact: '9920467976',
+        },
+        notes: {
+          address: 'payment',
+        }, 
+        theme: {
+          color: '#F37254',
         },
       };
-      const rzp = new window.Razorpay(options);
-      rzp.open();
+
+      const rzp1 = new window.Razorpay(razorpayOptions);
+      rzp1.open();
     } catch (error) {
-      console.error('Error in generating Razorpay order:', error);
+      console.error('Error: ', error);
     }
   };
-
-  // Retrieve student details from localStorage
-  const studentDetails = JSON.parse(localStorage.getItem('studentDetails'));
-
+  
   return (
     <section className='mt-32 md:pl-32 md:pr-32'>
       <h1 className='checkout_title md:pl-0 pl-4'>Checkout</h1>
@@ -70,7 +97,7 @@ function Checkout() {
             </div>
           </div>
           <p className='md:mr-28 mr-10 text-sm'>By completing your purchase you agree to the <Link to="/termsandconditions">Terms & Conditions</Link></p>
-          <button type='button' className='checkout_button' onClick={generateRazorpayOrder}>Complete Checkout</button>
+          <button type='button' className='checkout_button' onClick={handlePayment}>Complete Checkout</button>
         </div>
       </div>
     </section>
