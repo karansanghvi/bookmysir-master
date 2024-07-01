@@ -3,56 +3,58 @@ import { Link } from 'react-router-dom';
 import { CartContext } from '../components/contexts/CartContext';
 import '../assets/styles/style.css';
 import '../assets/styles/courses.css';
-import Razorpay from 'razorpay';
 import { firestore } from '../firebase';
 
 function Checkout() {
   const { cart, getTotalPrice } = useContext(CartContext);
 
   const studentDetails = JSON.parse(localStorage.getItem('studentDetails'));
-  
-  const handlePayment = async () => {
-    const razorpay = new Razorpay({
-      key_id: 'rzp_test_O3D0Wxoued9YVG',
-      key_secrent: 'jGfEwoslyetBQKMJbeWswfRH',
-    });
 
+  const handlePayment = async () => {
     const options = {
-      amount: getTotalPrice * 100,
+      key: 'rzp_test_O3D0Wxoued9YVG',
+      amount: getTotalPrice() * 100,
       currency: 'INR',
-      reciept: 'bookmysir',
+      receipt: 'bookmysir',
       payment_capture: 1,
     };
 
     try {
-      const response = await razorpay.orders.create(options);
+      const response = await fetch('/razorpay/order', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(options),
+      }).then((res) => res.json());
+
       console.log(response);
 
       await firestore.collection('payments').add({
         orderId: response.id,
-        amount: getTotalPrice,
+        amount: getTotalPrice(),
         status: 'pending',
         createdAt: new Date(),
       });
 
       const razorpayOptions = {
         key: 'rzp_test_O3D0Wxoued9YVG',
-        amount: getTotalPrice * 100,
+        amount: getTotalPrice() * 100,
         currency: 'INR',
         name: 'bookmysir',
-        description: 'payment for online course',
+        description: 'Payment for online course',
         order_id: response.id,
         handler: function (response) {
           console.log(response);
         },
         prefill: {
-          name: 'Karan',
-          email: 'admin@gmail.com',
-          contact: '9920467976',
+          name: studentDetails?.fullName || '',
+          email: studentDetails?.emailAddress || '',
+          contact: studentDetails?.phoneNumber || '',
         },
         notes: {
-          address: 'payment',
-        }, 
+          address: 'Payment',
+        },
         theme: {
           color: '#F37254',
         },
@@ -64,7 +66,7 @@ function Checkout() {
       console.error('Error: ', error);
     }
   };
-  
+
   return (
     <section className='mt-32 md:pl-32 md:pr-32'>
       <h1 className='checkout_title md:pl-0 pl-4'>Checkout</h1>

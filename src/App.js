@@ -44,17 +44,17 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="aboutus" element={<AboutUs />} />
         <Route path="admin" element={<AdminPage courses={courses} setCourses={setCourses} />} />
-        {/* <Route path="courses" element={<Courses courses={courses} />} /> */}
-        <Route path="/" element={<Courses courses={courses} />} />
-        {/* <Route path="course/:name" element={<CourseDetail courses={courses} />} /> */}
-        <Route path="/" element={<CourseDetail courses={courses} />} />
+        <Route path="courses" element={<Courses courses={courses} />} />
+        {/* <Route path="/" element={<Courses courses={courses} />} /> */}
+        <Route path="course/:name" element={<CourseDetail courses={courses} />} />
+        {/* <Route path="/" element={<CourseDetail courses={courses} />} /> */}
         <Route path="hometution" element={<HomeTution />} />
-        {/* <Route path="contact" element={<Contact />} /> */}
-        <Route path="/" element={<Contact />} />
-        {/* 
+        <Route path="contact" element={<Contact />} />
+        {/* <Route path="/" element={<Contact />} /> */}
+        
         <Route path="login" element={<Login />} />
-        <Route path="signup" element={<Signup />} /> */}
-        <Route path="/" element={<Login />} />
+        <Route path="signup" element={<Signup />} />
+        {/* <Route path="/" element={<Login />} />
         <Route path="/" element={<Signup />} />
         <Route path="/" element={<TermsAndConditions />} />
         <Route path="/" element={<PrivacyPolicy />} />
@@ -63,15 +63,15 @@ function App() {
         <Route path="/" element={<CoursesCompleted/>} />
         <Route path="/" element={<Profile/>}/>
         <Route path="/" element={<StudentDetails/>} />
-        <Route path="/" element={<Checkout/>} />
-        {/* <Route path="termsandconditions" element={<TermsAndConditions />} />
+        <Route path="/" element={<Checkout/>} /> */}
+        <Route path="termsandconditions" element={<TermsAndConditions />} />
         <Route path="privacypolicy" element={<PrivacyPolicy />} />
         <Route path="cart" element={<ShoppingCart />} />
         <Route path="mylearning" element={<MyLearning/>} />
         <Route path="coursescompleted" element={<CoursesCompleted/>} />
         <Route path="profile" element={<Profile/>}/>
         <Route path="studentdetails" element={<StudentDetails/>} />
-        <Route path="checkout" element={<Checkout/>} /> */}
+        <Route path="checkout" element={<Checkout/>} />
       </Routes>
       {!isAdminRoute && <Footer />}
     </>
