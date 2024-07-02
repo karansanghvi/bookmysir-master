@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import { storage } from '../../firebase';
-import Modal from '../Modal'; 
+import Modal from '../Modal';
 
 const CourseContent = ({ courses, updateCourseDetails }) => {
     const [selectedCourse, setSelectedCourse] = useState(null);
@@ -10,7 +10,7 @@ const CourseContent = ({ courses, updateCourseDetails }) => {
         bigDescription: '',
         instructor: '',
         instructorDescription: '',
-        videoUrl: ''
+        chapters: []
     });
     const [isEditing, setIsEditing] = useState(false);
     const [isViewing, setIsViewing] = useState(false);
@@ -21,7 +21,7 @@ const CourseContent = ({ courses, updateCourseDetails }) => {
         board: ''
     });
     const [showModal, setShowModal] = useState(false);
-    const [previewVideo, setPreviewVideo] = useState(null);
+    const [newChapter, setNewChapter] = useState({ title: '', videos: [] });
 
     const handleButtonClick = (course, isEdit) => {
         setSelectedCourse(course);
@@ -30,7 +30,7 @@ const CourseContent = ({ courses, updateCourseDetails }) => {
             instructorDescription: course.instructorDescription || '',
             requirements: course.requirements || '',
             instructor: course.instructor || '',
-            videoUrl: course.videoUrl || ''
+            chapters: course.chapters || []
         });
         setIsEditing(isEdit);
         setIsViewing(!isEdit);
@@ -42,18 +42,22 @@ const CourseContent = ({ courses, updateCourseDetails }) => {
         setDetails(prevDetails => ({ ...prevDetails, [name]: value }));
     };
 
-    const handlePreviewVideoChange = (e) => {
-        setPreviewVideo(e.target.files[0]);
+    const handleChapterChange = (e) => {
+        const { name, value, files } = e.target;
+        if (name === 'video') {
+            setNewChapter(prev => ({
+                ...prev,
+                videos: [...prev.videos, { videoFile: files[0], videoUrl: '' }]
+            }));
+        } else {
+            setNewChapter(prev => ({ ...prev, [name]: value }));
+        }
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        // Update preview video URL if a new video is uploaded
-        if (previewVideo) {
-            await handlePreviewVideoUpload();
-        }
-
+        // Add or update course details in Firestore
         updateCourseDetails(selectedCourse.name, details);
 
         setSelectedCourse(null);
@@ -67,33 +71,57 @@ const CourseContent = ({ courses, updateCourseDetails }) => {
         setFilters(prevFilters => ({ ...prevFilters, [name]: value }));
     };
 
-    const handlePreviewVideoUpload = async () => {
-        if (!previewVideo) {
-            alert('Please select a preview video file to upload.');
-            return;
+    const handleChapterUpload = async () => {
+        const uploadPromises = newChapter.videos.map(async video => {
+            const storageRef = ref(storage, `videos/${video.videoFile.name}`);
+            const uploadTask = uploadBytesResumable(storageRef, video.videoFile);
+
+            return new Promise((resolve, reject) => {
+                uploadTask.on(
+                    'state_changed',
+                    (snapshot) => {
+                        // Handle progress, if needed
+                    },
+                    (error) => {
+                        console.error('Error uploading chapter video: ', error);
+                        reject(error);
+                    },
+                    async () => {
+                        try {
+                            const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+                            video.videoUrl = downloadURL;
+                            resolve();
+                        } catch (error) {
+                            console.error('Error getting download URL: ', error);
+                            reject(error);
+                        }
+                    }
+                );
+            });
+        });
+
+        try {
+            await Promise.all(uploadPromises);
+            setNewChapter(prev => ({
+                ...prev,
+                videos: [...prev.videos]
+            }));
+            alert('Chapter videos uploaded successfully!');
+        } catch (error) {
+            console.error('Error uploading chapter videos: ', error);
         }
+    };
 
-        const storageRef = ref(storage, `videos/${previewVideo.name}`);
-        const uploadTask = uploadBytesResumable(storageRef, previewVideo);
-
-        uploadTask.on(
-            'state_changed',
-            (snapshot) => {
-                // Handle progress, if needed
-            },
-            (error) => {
-                console.error('Error uploading preview video: ', error);
-            },
-            async () => {
-                try {
-                    const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-                    setDetails(prevDetails => ({ ...prevDetails, videoUrl: downloadURL }));
-                    alert('Preview Video uploaded successfully!');
-                } catch (error) {
-                    console.error('Error getting download URL: ', error);
-                }
-            }
-        );
+    const addChapter = () => {
+        if (newChapter.title && newChapter.videos.length > 0) {
+            setDetails(prevDetails => ({
+                ...prevDetails,
+                chapters: [...prevDetails.chapters, newChapter]
+            }));
+            setNewChapter({ title: '', videos: [] });
+        } else {
+            alert('Please provide both title and at least one video for the chapter.');
+        }
     };
 
     const filteredCourses = courses.filter(course => {
@@ -183,8 +211,8 @@ const CourseContent = ({ courses, updateCourseDetails }) => {
                                 <div>
                                     <div>
                                         <h1>Requirements:</h1>
-                                        <textarea 
-                                            name="requirements" 
+                                        <textarea
+                                            name="requirements"
                                             id="styledInputTextArea"
                                             value={details.requirements}
                                             onChange={handleInputChange}
@@ -192,10 +220,10 @@ const CourseContent = ({ courses, updateCourseDetails }) => {
                                     </div>
                                     <div>
                                         <h1>Description:</h1>
-                                        <textarea 
+                                        <textarea
                                             name="bigDescription"
                                             value={details.bigDescription}
-                                            onChange={handleInputChange} 
+                                            onChange={handleInputChange}
                                             id="styledInputTextArea"
                                         ></textarea>
                                     </div>
@@ -213,7 +241,7 @@ const CourseContent = ({ courses, updateCourseDetails }) => {
                                     </div>
                                     <div>
                                         <h1>Instructor Description:</h1>
-                                        <input 
+                                        <input
                                             type="text"
                                             name='instructorDescription'
                                             value={details.instructorDescription}
@@ -221,100 +249,66 @@ const CourseContent = ({ courses, updateCourseDetails }) => {
                                             className='admin_input'
                                         />
                                     </div>
-                                    <div>
-                                        <h1>Upload Preview Video:</h1>
-                                        <input
-                                            type="file"
-                                            accept="video/*"
-                                            onChange={handlePreviewVideoChange}
-                                            className='admin_input'
-                                        />
-                                    </div>
-                                </div>
-                                <div className='mt-4 flex justify-between'>
-                                    <button
-                                        type="submit"
-                                        className='bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded'
-                                    >
-                                        Save Changes
-                                    </button>
-                                    <button
-                                        type="button"
-                                        className='bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded'
-                                        onClick={() => setShowModal(false)}
-                                    >
-                                        Cancel
-                                    </button>
                                 </div>
                             </div>
+                            <div>
+                            <h2>Chapters</h2>
+                            {details.chapters && details.chapters.map((chapter, index) => (
+                                <div key={index}>
+                                    <h3>{chapter.title}</h3>
+                                    {chapter.videos && chapter.videos.map((video, vIndex) => (
+                                        <video key={vIndex} src={video.videoUrl} controls width="300"></video>
+                                    ))}
+                                </div>
+                            ))}
+                        </div>
+                            <div>
+                                <h2>Add New Chapter</h2>
+                                <input
+                                    type="text"
+                                    name="title"
+                                    placeholder="Chapter Title"
+                                    value={newChapter.title}
+                                    onChange={handleChapterChange}
+                                />
+                                <input
+                                    type="file"
+                                    name="video"
+                                    onChange={handleChapterChange}
+                                    multiple // Allow multiple video selection
+                                />
+                                <button type="button" onClick={handleChapterUpload}>Upload Video(s)</button>
+                                <button type="button" onClick={addChapter}>Add Chapter</button>
+                            </div>
+                            <button type="submit" className="btn btn-primary">Save</button>
                         </form>
                     </div>
                 )}
-
                 {isViewing && selectedCourse && (
                     <div>
-                        <h1 className='text-center text-xl font-semibold mb-2'>Details for {selectedCourse.name}</h1>
+                        <h1 className='text-center text-xl font-semibold mb-2'>View Details for {selectedCourse.name}</h1>
                         <div>
-                            <div>
-                                <div>
-                                    <h1>Requirements:</h1>
-                                    <textarea 
-                                        name="requirements" 
-                                        id="styledInputTextArea"
-                                        value={details.requirements}
-                                        readOnly
-                                    ></textarea>
+                            <h2>Description:</h2>
+                            <p>{selectedCourse.bigDescription}</p>
+                        </div>
+                        <div>
+                            <h2>Instructor Description:</h2>
+                            <p>{selectedCourse.instructorDescription}</p>
+                        </div>
+                        <div>
+                            <h2>Requirements:</h2>
+                            <p>{selectedCourse.requirements}</p>
+                        </div>
+                        <div>
+                            <h2>Chapters</h2>
+                            {details.chapters && details.chapters.map((chapter, index) => (
+                                <div key={index}>
+                                    <h3>{chapter.title}</h3>
+                                    {chapter.videos && chapter.videos.map((video, vIndex) => (
+                                        <video key={vIndex} src={video.videoUrl} controls width="300"></video>
+                                    ))}
                                 </div>
-                                <div>
-                                    <h1>Description:</h1>
-                                    <textarea 
-                                        name="bigDescription"
-                                        value={details.bigDescription}
-                                        readOnly
-                                        id="styledInputTextArea"
-                                    ></textarea>
-                                </div>
-                            </div>
-                            <div>
-                                <div>
-                                    <h1>Instructor Name:</h1>
-                                    <input
-                                        type="text"
-                                        name="instructor"
-                                        value={details.instructor}
-                                        readOnly
-                                        className='admin_input'
-                                    />
-                                </div>
-                                <div>
-                                    <h1>Instructor Description:</h1>
-                                    <input 
-                                        type="text"
-                                        name='instructorDescription'
-                                        value={details.instructorDescription}
-                                        readOnly
-                                        className='admin_input'
-                                    />
-                                </div>
-                                <div>
-                                    <h1>Preview Video:</h1>
-                                    {details.videoUrl && (
-                                        <video controls className='w-full h-auto'>
-                                            <source src={details.videoUrl} type="video/mp4" />
-                                            Your browser does not support the video tag.
-                                        </video>
-                                    )}
-                                </div>
-                            </div>
-                            <div className='mt-4 flex justify-between'>
-                                <button
-                                    type="button"
-                                    className='bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded'
-                                    onClick={() => setShowModal(false)}
-                                >
-                                    Close
-                                </button>
-                            </div>
+                            ))}
                         </div>
                     </div>
                 )}

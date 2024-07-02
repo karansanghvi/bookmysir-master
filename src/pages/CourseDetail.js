@@ -113,9 +113,23 @@ const CourseDetail = ({ courses }) => {
         <div className='course_content md:pl-32 mt-20'>
           <h1 className='md:text-4xl font-bold'>Course Content:</h1>
           {isPurchased ? (
-            <p className='text-green-500 font-semibold mb-4'>Course Purchased</p>
+            <>
+              <p className='text-green-500 font-semibold mb-4'>Course Purchased</p>
+            </>
           ) : (
             <p className='text-red-500 font-semibold mb-4'>Course Not Purchased</p>
+          )}
+          {course.chapters && course.chapters.length > 0 ? (
+            course.chapters.map((chapter, index) => (
+              <div key={index}>
+                <h2 className='font-bold'>{chapter.title}</h2>
+                {chapter.videos && chapter.videos.map((video, vIndex) => (
+                  <ReactPlayer key={vIndex} url={video.videoUrl} controls className='w-200 h-80' />
+                ))}
+              </div>
+            ))
+          ) : (
+            <p>No chapters available for this course.</p>
           )}
         </div>
 
