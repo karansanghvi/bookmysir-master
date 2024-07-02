@@ -3,7 +3,7 @@ import { collection, getDocs, query, where } from "firebase/firestore";
 import { firestore } from "../../firebase";
 import VideoModal from './VideoModal'; 
 
-const CourseContentAccordion = ({ courseName }) => {
+const CourseContentAccordion = ({ courseName, isPurchased }) => {
   const [accordions, setAccordions] = useState([]);
   const [showVideoModal, setShowVideoModal] = useState(false);
   const [videoUrls, setVideoUrls] = useState([]);
@@ -55,17 +55,14 @@ const CourseContentAccordion = ({ courseName }) => {
               <svg
                 data-accordion-icon
                 className="w-3 h-3 rotate-180 shrink-0"
-                aria-hidden="true"
+                fill="currentColor"
+                viewBox="0 0 20 20"
                 xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 10 6"
               >
                 <path
-                  stroke="currentColor"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M9 5 5 1 1 5"
+                  fillRule="evenodd"
+                  d="M5.23 7.21a.75.75 0 011.06.02L10 10.44l3.72-3.21a.75.75 0 111.04 1.1l-4.25 3.67a.75.75 0 01-1.04 0L5.21 8.29a.75.75 0 01.02-1.08z"
+                  clipRule="evenodd"
                 />
               </svg>
             </button>
@@ -75,33 +72,34 @@ const CourseContentAccordion = ({ courseName }) => {
             className="hidden"
             aria-labelledby={`accordion-collapse-heading-${index}`}
           >
-            <div className="p-5">
-              <p className="mb-2 text-black">{accordion.content}</p>
-              <div>
-                {accordion.videoUrls.map((url, idx) => (
-                  <div key={idx}>
+            <div className="p-5 font-light border border-gray-200">
+              <p>{accordion.content}</p>
+              {isPurchased ? (
+                <div className="flex flex-col">
+                  {accordion.videoUrls.map((url, idx) => (
                     <a
+                      key={idx}
                       href={url}
-                      className="text-blue-500 underline block mb-2"
                       target="_blank"
                       rel="noopener noreferrer"
+                      className="text-blue-500 underline mt-2"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        handleVideoClick(accordion.videoUrls);
+                      }}
                     >
-                      Video {idx + 1}
+                      Watch Video {idx + 1}
                     </a>
-                  </div>
-                ))}
-              </div>
-              <button
-                className="text-blue-500 underline sr-only"
-                onClick={() => handleVideoClick(accordion.videoUrls)}
-              >
-                View Videos
-              </button>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-red-500 font-semibold mt-2">Purchase the course to access the videos</p>
+              )}
             </div>
           </div>
         </div>
       ))}
-      <VideoModal show={showVideoModal} onClose={() => setShowVideoModal(false)} videoUrls={videoUrls} />
+      {showVideoModal && <VideoModal videoUrls={videoUrls} onClose={() => setShowVideoModal(false)} />}
     </div>
   );
 };

@@ -4,38 +4,29 @@ import { CartContext } from '../components/contexts/CartContext';
 import '../assets/styles/style.css';
 import '../assets/styles/courses.css';
 import { firestore } from '../firebase';
+import { addDoc, collection } from 'firebase/firestore';
 
 function Checkout() {
   const { cart, getTotalPrice } = useContext(CartContext);
-
   const studentDetails = JSON.parse(localStorage.getItem('studentDetails'));
+  const userId = localStorage.getItem('userID');
 
   const handlePayment = async () => {
     const options = {
-      key: 'rzp_test_O3D0Wxoued9YVG',
-      amount: getTotalPrice() * 100,
+      amount: getTotalPrice(),
       currency: 'INR',
       receipt: 'bookmysir',
       payment_capture: 1,
     };
 
     try {
-      const response = await fetch('/razorpay/order', {
+      const response = await fetch('http://localhost:5000/razorpay/order', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(options),
       }).then((res) => res.json());
-
-      console.log(response);
-
-      await firestore.collection('payments').add({
-        orderId: response.id,
-        amount: getTotalPrice(),
-        status: 'pending',
-        createdAt: new Date(),
-      });
 
       const razorpayOptions = {
         key: 'rzp_test_O3D0Wxoued9YVG',
@@ -44,8 +35,9 @@ function Checkout() {
         name: 'bookmysir',
         description: 'Payment for online course',
         order_id: response.id,
-        handler: function (response) {
+        handler: async function (response) {
           console.log(response);
+          await savePurchasedCourses();
         },
         prefill: {
           name: studentDetails?.fullName || '',
@@ -64,6 +56,30 @@ function Checkout() {
       rzp1.open();
     } catch (error) {
       console.error('Error: ', error);
+    }
+  };
+
+  const savePurchasedCourses = async () => {
+    const purchasedCoursesRef = collection(firestore, 'purchasedCourses');
+
+    try {
+      for (const course of cart) {
+        await addDoc(purchasedCoursesRef, {
+          userId,
+          name: course.name,
+          link: `/course/${course.name}`,
+          purchasedAt: new Date(),
+          studentDetails: {
+            fullName: studentDetails?.fullName || '',
+            emailAddress: studentDetails?.emailAddress || '',
+            phoneNumber: studentDetails?.phoneNumber || '',
+            educationName: studentDetails?.educationName || '',
+          },
+          totalPrice: getTotalPrice(),
+        });
+      }
+    } catch (error) {
+      console.error('Error saving purchased courses: ', error);
     }
   };
 

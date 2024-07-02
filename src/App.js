@@ -45,25 +45,11 @@ function App() {
         <Route path="aboutus" element={<AboutUs />} />
         <Route path="admin" element={<AdminPage courses={courses} setCourses={setCourses} />} />
         <Route path="courses" element={<Courses courses={courses} />} />
-        {/* <Route path="/" element={<Courses courses={courses} />} /> */}
         <Route path="course/:name" element={<CourseDetail courses={courses} />} />
-        {/* <Route path="/" element={<CourseDetail courses={courses} />} /> */}
         <Route path="hometution" element={<HomeTution />} />
         <Route path="contact" element={<Contact />} />
-        {/* <Route path="/" element={<Contact />} /> */}
-        
         <Route path="login" element={<Login />} />
         <Route path="signup" element={<Signup />} />
-        {/* <Route path="/" element={<Login />} />
-        <Route path="/" element={<Signup />} />
-        <Route path="/" element={<TermsAndConditions />} />
-        <Route path="/" element={<PrivacyPolicy />} />
-        <Route path="/" element={<ShoppingCart />} />
-        <Route path="/" element={<MyLearning/>} />
-        <Route path="/" element={<CoursesCompleted/>} />
-        <Route path="/" element={<Profile/>}/>
-        <Route path="/" element={<StudentDetails/>} />
-        <Route path="/" element={<Checkout/>} /> */}
         <Route path="termsandconditions" element={<TermsAndConditions />} />
         <Route path="privacypolicy" element={<PrivacyPolicy />} />
         <Route path="cart" element={<ShoppingCart />} />

@@ -1,21 +1,30 @@
-// src/components/VideoModal.js
 import React from 'react';
+import ReactPlayer from 'react-player';
 
-const VideoModal = ({ show, onClose, videoUrl }) => {
-    if (!show) return null;
-
-    return (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-            <div className="bg-white p-4 rounded shadow-md max-w-md w-full">
-                <button onClick={onClose} className="text-right text-red-500 font-bold">X</button>
-                {videoUrl ? (
-                    <video src={videoUrl} controls className="w-full mt-2"></video>
-                ) : (
-                    <p>No video URL available</p>
-                )}
-            </div>
+const VideoModal = ({ videoUrls, onClose }) => {
+  return (
+    <div className="fixed inset-0 bg-gray-900 bg-opacity-75 flex justify-center items-center">
+      <div className="bg-white p-4 rounded-lg shadow-lg relative">
+        <button
+          className="absolute top-2 right-2 text-red-500 font-bold"
+          onClick={onClose}
+        >
+          X
+        </button>
+        <div className="w-full h-full">
+          {videoUrls.map((url, index) => (
+            <ReactPlayer
+              key={index}
+              url={url}
+              width="100%"
+              height="auto"
+              controls
+            />
+          ))}
         </div>
-    );
+      </div>
+    </div>
+  );
 };
 
 export default VideoModal;
