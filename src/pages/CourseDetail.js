@@ -1,6 +1,5 @@
-import React, { useContext, useState, useEffect } from 'react';
+import React, { useContext, useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import ReactPlayer from 'react-player';
 import { CartContext } from '../components/contexts/CartContext';
 import video from '../assets/images/ph_video.png';
 import downloadable_resources from '../assets/images/ic_baseline-download.png';
@@ -8,6 +7,10 @@ import mobile from '../assets/images/uiw_mobile.png';
 import '../assets/styles/courses.css';
 import { firestore } from '../firebase';
 import { collection, query, where, getDocs } from 'firebase/firestore';
+import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
+import 'react-tabs/style/react-tabs.css';
+import { IoIosArrowBack, IoIosCheckmarkCircleOutline } from "react-icons/io";
+import { BsFillLockFill } from "react-icons/bs";
 
 const CourseDetail = ({ courses }) => {
   const { name } = useParams();
@@ -17,6 +20,10 @@ const CourseDetail = ({ courses }) => {
   const [showModal, setShowModal] = useState(false);
   const isLoggedIn = localStorage.getItem('userID');
   const [isPurchased, setIsPurchased] = useState(false);
+  const [selectedChapter, setSelectedChapter] = useState(null);
+  const [selectedTabIndex, setSelectedTabIndex] = useState(0);
+  const courseContentRef = useRef(null);
+  const [viewedLectures, setViewedLectures] = useState([]);
 
   useEffect(() => {
     const fetchPurchasedCourses = async () => {
@@ -38,9 +45,12 @@ const CourseDetail = ({ courses }) => {
     fetchPurchasedCourses();
   }, [isLoggedIn, name]);
 
-  if (!course) {
-    return <div className='mt-32'>Course not found</div>;
-  }
+  useEffect(() => {
+    if (selectedChapter) {
+      const storedViewedLectures = JSON.parse(localStorage.getItem(`${name}_${selectedChapter.title}_viewedLectures`)) || [];
+      setViewedLectures(storedViewedLectures);
+    }
+  }, [selectedChapter, name]);
 
   const handleAddToCart = () => {
     if (isLoggedIn) {
@@ -49,6 +59,39 @@ const CourseDetail = ({ courses }) => {
     } else {
       setShowModal(true);
     }
+  };
+
+  const handleGoToCourse = () => {
+    if (courseContentRef.current) {
+      courseContentRef.current.scrollIntoView({
+        behavior: 'smooth'
+      });
+    }
+  };
+
+  const handleVideoClick = (videoUrl, vIndex) => {
+    if (!isPurchased) {
+      console.log("Purchase the course to see the video");
+      return;
+    }
+
+    window.open(videoUrl, '_blank');
+
+    setTimeout(() => {
+      const updatedViewedLectures = [...viewedLectures];
+      updatedViewedLectures[vIndex] = true;
+      setViewedLectures(updatedViewedLectures);
+      localStorage.setItem(`${name}_${selectedChapter.title}_viewedLectures`, JSON.stringify(updatedViewedLectures));
+    }, 30000);
+  };
+
+  const handleChapterClick = (chapter) => {
+    setSelectedChapter(chapter);
+    setSelectedTabIndex(1);
+  };
+
+  const handleBackClick = () => {
+    setSelectedChapter(null);
   };
 
   return (
@@ -62,19 +105,18 @@ const CourseDetail = ({ courses }) => {
                 <p className='mb-4'>{course.description}</p>
               </div>
               <div className='course_card'>
-                <ReactPlayer
-                  url={course.videoUrl}
-                  width='100%'
-                  height='auto'
-                  controls
-                  playing
-                />
                 <p className='text-sm font-normal text-center'>Preview this course</p>
                 <h1 className='md:ml-6 font-semibold text-2xl'>₹500</h1>
                 <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
-                  <button onClick={handleAddToCart} className='add_to_cart_button'>
-                    Add To Cart
-                  </button>
+                  {isPurchased ? (
+                    <button onClick={handleGoToCourse} className='add_to_cart_button'>
+                      Go To Course
+                    </button>
+                  ) : (
+                    <button onClick={handleAddToCart} className='add_to_cart_button'>
+                      Add To Cart
+                    </button>
+                  )}
                 </div>
                 <p className='text-sm font-normal text-center mt-2'>Full Lifetime Access</p>
               </div>
@@ -82,8 +124,8 @@ const CourseDetail = ({ courses }) => {
           </div>
         </div>
 
-        <div className='course_includes md:pl-32 mt-10'>
-          <h1 className='md:text-4xl font-bold'>This Course Includes:</h1>
+        <div className='course_includes md:pl-32 mt-10 pl-6'>
+          <h1 className='md:text-4xl text-2xl font-bold'>This Course Includes:</h1>
           <div className='grid md:grid-cols-3 grid-cols-1'>
             <div className='flex items-center'>
               <img src={video} alt="" />
@@ -100,18 +142,18 @@ const CourseDetail = ({ courses }) => {
           </div>
         </div>
 
-        <div className='course_content md:pl-32 mt-20 md:pr-32'>
-          <h1 className='md:text-4xl font-bold'>Description:</h1>
+        <div className='course_content md:pl-32 mt-20 md:pr-32 pl-6 pr-6'>
+          <h1 className='md:text-4xl text-2xl font-bold'>Description:</h1>
           <p className='text-justify'>{course.bigDescription}</p>
         </div>
 
-        <div className='course_content md:pl-32 mt-20 md:pr-32'>
-          <h1 className='md:text-4xl font-bold'>Requirements:</h1>
+        <div className='course_content md:pl-32 mt-20 md:pr-32 pl-6 pr-6'>
+          <h1 className='md:text-4xl text-2xl font-bold'>Requirements:</h1>
           <p className='text-justify'>{course.requirements}</p>
         </div>
 
-        <div className='course_content md:pl-32 mt-20'>
-          <h1 className='md:text-4xl font-bold'>Course Content:</h1>
+        <div className='course_content md:pl-32 mt-20 md:pr-32 pl-6 pr-6' ref={courseContentRef}>
+          <h1 className='md:text-4xl text-2xl font-bold'>Course Content:</h1>
           {isPurchased ? (
             <>
               <p className='text-green-500 font-semibold mb-4'>Course Purchased</p>
@@ -120,26 +162,69 @@ const CourseDetail = ({ courses }) => {
             <p className='text-red-500 font-semibold mb-4'>Course Not Purchased</p>
           )}
           {course.chapters && course.chapters.length > 0 ? (
-            course.chapters.map((chapter, index) => (
-              <div key={index}>
-                <h2 className='font-bold'>{chapter.title}</h2>
-                {chapter.videos && chapter.videos.map((video, vIndex) => (
-                  <ReactPlayer key={vIndex} url={video.videoUrl} controls className='w-200 h-80' />
+            <Tabs selectedIndex={selectedTabIndex} onSelect={setSelectedTabIndex}>
+              <TabList>
+                <Tab>
+                  <h1 className='font-bold'>Overview</h1>
+                </Tab>
+                <Tab>
+                  <h1 className='font-bold'>Content</h1>
+                </Tab>
+              </TabList>
+              <TabPanel>
+                {course.chapters.map((chapter, index) => (
+                  <div key={index}>
+                    <h2>Chapter {index}: {chapter.title}</h2>
+                  </div>
                 ))}
-              </div>
-            ))
+              </TabPanel>
+              <TabPanel>
+                {selectedChapter ? (
+                  <div>
+                    <div className='flex mb-6'>
+                      <IoIosArrowBack
+                        onClick={handleBackClick}
+                      />
+                      <h2 className='pl-4 font-medium'>Chapter: {selectedChapter.title}</h2>
+                      {isPurchased ? null : <BsFillLockFill className='ml-4 text-red-500' />}
+                    </div>
+                    {selectedChapter.videos && selectedChapter.videos.map((video, vIndex) => (
+                      <div key={vIndex}>
+                        <button
+                          onClick={() => handleVideoClick(video.videoUrl, vIndex)}
+                          className='flex'
+                        >
+                          <span>{`Lecture ${vIndex + 1}`}</span>
+                          {viewedLectures[vIndex] && <IoIosCheckmarkCircleOutline className='ml-2 text-green-500' size={24} />}
+                        </button>
+                        <hr className='mt-4 mb-4' />
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  course.chapters.map((chapter, index) => (
+                    <div key={index}>
+                      <button onClick={() => handleChapterClick(chapter)}>
+                        {chapter.title}
+                      </button>
+                      <hr className='mt-4' />
+                    </div>
+                  ))
+                )}
+              </TabPanel>
+            </Tabs>
           ) : (
             <p>No chapters available for this course.</p>
           )}
         </div>
 
-        <div className='course_content md:pl-32 mt-20'>
-          <h1 className='md:text-4xl font-bold'>Course Resources:</h1>
+        <div className='course_content md:pl-32 mt-20 pl-6 pr-6'>
+          <h1 className='md:text-4xl text-2xl font-bold'>Course Resources:</h1>
         </div>
 
-        <div className='course_content md:pl-32 mt-20 md:pr-32'>
-          <h1 className='md:text-4xl font-bold'>Meet Your Instructor</h1>
-          <p><b>{course.instructor}</b></p>
+        <div className='course_content md:pl-32 mt-20 md:pr-32 pl-6 pr-6'>
+          <h1 className='md:text-4xl text-2xl font-bold'>Meet Your Instructor</h1>
+          <p className='mt-4'><b>{course.instructor}</b></p>
           <p className='text-justify'>{course.instructorDescription}</p>
         </div>
       </section>

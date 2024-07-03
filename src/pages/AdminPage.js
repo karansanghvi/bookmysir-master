@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Modal from 'react-modal';
 import '../assets/styles/admin.css';
 import CourseAdminPanel from '../components/AdminPanel/CourseAdminPanel';
 import CourseContent from '../components/AdminPanel/CourseContent'; 
 import HomeTutionAdminPanel from '../components/AdminPanel/HomeTutionAdminPanel';
 import UsersAdminPanel from '../components/AdminPanel/UsersAdminPanel';
+import PurchasedCoursesAdminPanel from '../components/AdminPanel/PurchasedCoursesAdminPanel';
 
 Modal.setAppElement('#root');
 
@@ -14,6 +16,7 @@ const AdminPage = ({ courses, setCourses }) => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [showModal, setShowModal] = useState(true);
+    const navigate = useNavigate();
 
     const handleTabClick = (tabIndex) => {
         setActiveTab(tabIndex);
@@ -44,6 +47,7 @@ const AdminPage = ({ courses, setCourses }) => {
         setUsername('');
         setPassword('');
         setShowModal(true);
+        navigate('/');
     };
 
     return (
@@ -99,7 +103,9 @@ const AdminPage = ({ courses, setCourses }) => {
                                     <li className={`cursor-pointer ${activeTab === 4 ? 'bg-gray-400' : 'bg-gray-200'} px-4 py-2 rounded mb-2`} onClick={() => handleTabClick(4)}>
                                         Home Tution 
                                     </li>
-                                    
+                                    <li className={`cursor-pointer ${activeTab === 5 ? 'bg-gray-400' : 'bg-gray-200'} px-4 py-2 rounded mb-2`} onClick={() => handleTabClick(5)}>
+                                        Purchased Courses
+                                    </li>
                                 </ul>
                             </div>
                         </div>
@@ -108,6 +114,7 @@ const AdminPage = ({ courses, setCourses }) => {
                             {activeTab === 2 && <CourseContent courses={courses} updateCourseDetails={updateCourseDetails} />}
                             {activeTab === 3 && <UsersAdminPanel />}
                             {activeTab === 4 && <HomeTutionAdminPanel />}
+                            {activeTab === 5 && <PurchasedCoursesAdminPanel/>}
                         </div>
                     </div>
                 </div>
