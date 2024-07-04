@@ -83,13 +83,6 @@ const AddCourseModal = ({ currentCourse, setCurrentCourse, handleSubmit, isEditi
             <option value="Automobile Engineering">Automobile Engineering</option>
             <option value="None">None</option>
           </select>
-          {/* <h1>Upload Course Image</h1>
-          <input
-            type="file"
-            name="image"
-            onChange={handleImageChange}
-            className="mb-2"
-          /> */}
           <div className="flex justify-between">
             <button type="submit" className='apply_button pl-4 pr-4'>{isEditing ? 'Save' : 'Add'}</button>
             <button onClick={onClose} className='apply_button pl-6 pr-6'>Cancel</button>
@@ -101,74 +94,105 @@ const AddCourseModal = ({ currentCourse, setCurrentCourse, handleSubmit, isEditi
 };
 
 const ViewCoursesModal = ({ courses, handleEdit, handleDelete, onClose, handleFilterChange, filters }) => {
+  const [currentPage, setCurrentPage] = useState(1);
+  const [perPage] = useState(5); // Number of items per page
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
+
+  // Filtered and paginated courses based on current page
+  const indexOfLastCourse = currentPage * perPage;
+  const indexOfFirstCourse = indexOfLastCourse - perPage;
+  const currentCourses = courses.slice(indexOfFirstCourse, indexOfLastCourse);
+
+  // Calculate total number of pages
+  const totalPages = Math.ceil(courses.length / perPage);
+
   return (
-    <div >
-      <div >
+    <div>
+      <div>
         <h1 className="text-4xl font-bold mb-4">View Added Courses</h1>
         <div className="filters mb-4 flex justify-between">
-            <select name="standard" value={filters.standard} onChange={handleFilterChange} className='mr-4'>
-                <option value="">Standard</option>
-                <option value="9th Standard">9th Standard</option>
-                <option value="10th Standard">10th Standard</option>
-                <option value="11th Standard">11th Standard</option>
-                <option value="12th Standard">12th Standard</option>
-                <option value="None">None</option>
-            </select>
-            <select name="branch" value={filters.branch} onChange={handleFilterChange} className='mr-4'>
-                <option value="">Branch</option>
-                <option value="Mechanical Engineering">Mechanical Engineering</option>
-                <option value="Electronics Engineering">Electronics Engineering</option>
-                <option value="Electronics & Telecommunication Engineering">Electronics & Telecommunication Engineering</option>
-                <option value="Electrical Engineering">Electrical Engineering</option>
-                <option value="Production Engineering">Production Engineering</option>
-                <option value="Civil Engineering">Civil Engineering</option>
-                <option value="Automobile Engineering">Automobile Engineering</option>
-                <option value="None">None</option>
-            </select>
-            <select name="board" value={filters.board} onChange={handleFilterChange}>
-                <option value="">Board</option>
-                <option value="ICSE Board">ICSE Board</option>
-                <option value="CBSE Board">CBSE Board</option>
-                <option value="HSC Board">HSC Board</option>
-                <option value="SSC Board">SSC Board</option>
-                <option value="None">None</option>
-            </select>
+          <select name="standard" value={filters.standard} onChange={handleFilterChange} className="mr-4">
+            <option value="">Standard</option>
+            <option value="9th Standard">9th Standard</option>
+            <option value="10th Standard">10th Standard</option>
+            <option value="11th Standard">11th Standard</option>
+            <option value="12th Standard">12th Standard</option>
+            <option value="None">None</option>
+          </select>
+          <select name="branch" value={filters.branch} onChange={handleFilterChange} className="mr-4">
+            <option value="">Branch</option>
+            <option value="Mechanical Engineering">Mechanical Engineering</option>
+            <option value="Electronics Engineering">Electronics Engineering</option>
+            <option value="Electronics & Telecommunication Engineering">Electronics & Telecommunication Engineering</option>
+            <option value="Electrical Engineering">Electrical Engineering</option>
+            <option value="Production Engineering">Production Engineering</option>
+            <option value="Civil Engineering">Civil Engineering</option>
+            <option value="Automobile Engineering">Automobile Engineering</option>
+            <option value="None">None</option>
+          </select>
+          <select name="board" value={filters.board} onChange={handleFilterChange}>
+            <option value="">Board</option>
+            <option value="ICSE Board">ICSE Board</option>
+            <option value="CBSE Board">CBSE Board</option>
+            <option value="HSC Board">HSC Board</option>
+            <option value="SSC Board">SSC Board</option>
+            <option value="None">None</option>
+          </select>
         </div>
         <hr />
-        <table className='table-auto w-full mb-10'>
+        <table className="table-auto w-full mb-10">
           <thead>
             <tr>
-              <th className='px-4 py-2'>Course Name</th>
-              <th className='px-4 py-2'>Description</th>
-              <th className='px-4 py-2'>Standard</th>
-              <th className='px-4 py-2'>Board</th>
-              <th className='px-4 py-2'>Branch</th>
-              <th className='px-4 py-2'>Actions</th>
+              <th className="px-4 py-2">Course Name</th>
+              <th className="px-4 py-2">Description</th>
+              <th className="px-4 py-2">Standard</th>
+              <th className="px-4 py-2">Board</th>
+              <th className="px-4 py-2">Branch</th>
+              <th className="px-4 py-2">Actions</th>
             </tr>
           </thead>
           <tbody>
-            {courses.map((course, index) => (
+            {currentCourses.map((course, index) => (
               <tr key={index}>
-                <td className='border px-4 py-2'>{course.name}</td>
-                <td className='border px-4 py-2'>{course.description}</td>
-                <td className='border px-4 py-2'>{course.standard}</td>
-                <td className='border px-4 py-2'>{course.board}</td>
-                <td className='border px-4 py-2'>{course.branch}</td>
-                <td className='border px-4 py-2'>
-                  <div className='flex justify-between'>
-                    <button onClick={() => handleEdit(index)} className='pl-4 pr-4'>Edit</button>
-                    <button onClick={() => handleDelete(index)} className='pl-6 pr-6'>Delete</button>
+                <td className="border px-4 py-2">{course.name}</td>
+                <td className="border px-4 py-2">{course.description}</td>
+                <td className="border px-4 py-2">{course.standard}</td>
+                <td className="border px-4 py-2">{course.board}</td>
+                <td className="border px-4 py-2">{course.branch}</td>
+                <td className="border px-4 py-2">
+                  <div className="flex justify-between">
+                    <button onClick={() => handleEdit(index)} className="pl-4 pr-4">
+                      Edit
+                    </button>
+                    <button onClick={() => handleDelete(index)} className="pl-6 pr-6">
+                      Delete
+                    </button>
                   </div>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
-        <button onClick={onClose} className='apply_button'>Go Back</button>
+        <div className="flex justify-between">
+          <button onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1} className="pl-4 pr-4">
+            Previous
+          </button>
+          <div>{`Page ${currentPage} of ${totalPages}`}</div>
+          <button onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage === totalPages} className="pl-4 pr-4">
+            Next
+          </button>
+        </div>
+        <button onClick={onClose} className="apply_button">
+          Go Back
+        </button>
       </div>
     </div>
   );
 };
+
 
 const CourseAdminPanel = ({ courses, setCourses }) => {
   const [currentCourse, setCurrentCourse] = useState({

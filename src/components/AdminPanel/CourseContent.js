@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
+import { ref, uploadBytesResumable, getDownloadURL, deleteObject } from 'firebase/storage';
 import { storage } from '../../firebase';
 import Modal from '../Modal';
 
@@ -21,7 +21,43 @@ const CourseContent = ({ courses, updateCourseDetails }) => {
         board: ''
     });
     const [showModal, setShowModal] = useState(false);
-    const [newChapter, setNewChapter] = useState({ title: '', videos: [] });
+    const [newChapter, setNewChapter] = useState({ title: '', videos: [], documents: [] });
+    const [previewVideo, setPreviewVideo] = useState(null);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [itemsPerPage] = useState(20);
+
+    const handlePreviewVideoChange = (e) => {
+        setPreviewVideo(e.target.files[0]);
+    };
+
+    const handlePreviewVideoUpload = async () => {
+        if (!previewVideo) {
+            alert('Please select a preview video file to upload');
+            return;
+        }
+
+        const storageRef = ref(storage, `videos/${previewVideo.name}`);
+        const uploadTask = uploadBytesResumable(storageRef, previewVideo);
+
+        uploadTask.on(
+            'state_changed',
+            (snapshot) => {
+                // handle process if needed
+            },
+            (error) => {
+                console.log('Error uploading preview video: ', error);
+            },
+            async () => {
+                try {
+                    const downloadUrl = await getDownloadURL(uploadTask.snapshot.ref);
+                    setDetails(prevDetails => ({ ...prevDetails, videoUrl: downloadUrl }));
+                    alert('Preview Video Uploaded Successfully');
+                } catch (error) {
+                    console.error('Error getting download URL: ', error);
+                }
+            }
+        );
+    };
 
     const handleButtonClick = (course, isEdit) => {
         setSelectedCourse(course);
@@ -49,6 +85,11 @@ const CourseContent = ({ courses, updateCourseDetails }) => {
                 ...prev,
                 videos: [...prev.videos, { videoFile: files[0], videoUrl: '' }]
             }));
+        } else if (name === 'document') {
+            setNewChapter(prev => ({
+                ...prev,
+                documents: [...prev.documents, { documentFile: files[0], documentUrl: '' }]
+            }));
         } else {
             setNewChapter(prev => ({ ...prev, [name]: value }));
         }
@@ -72,7 +113,7 @@ const CourseContent = ({ courses, updateCourseDetails }) => {
     };
 
     const handleChapterUpload = async () => {
-        const uploadPromises = newChapter.videos.map(async video => {
+        const videoUploadPromises = newChapter.videos.map(async video => {
             const storageRef = ref(storage, `videos/${video.videoFile.name}`);
             const uploadTask = uploadBytesResumable(storageRef, video.videoFile);
 
@@ -100,15 +141,44 @@ const CourseContent = ({ courses, updateCourseDetails }) => {
             });
         });
 
+        const documentUploadPromises = newChapter.documents.map(async document => {
+            const storageRef = ref(storage, `documents/${document.documentFile.name}`);
+            const uploadTask = uploadBytesResumable(storageRef, document.documentFile);
+
+            return new Promise((resolve, reject) => {
+                uploadTask.on(
+                    'state_changed',
+                    (snapshot) => {
+                        // Handle progress, if needed
+                    },
+                    (error) => {
+                        console.error('Error uploading chapter document: ', error);
+                        reject(error);
+                    },
+                    async () => {
+                        try {
+                            const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+                            document.documentUrl = downloadURL;
+                            resolve();
+                        } catch (error) {
+                            console.error('Error getting download URL: ', error);
+                            reject(error);
+                        }
+                    }
+                );
+            });
+        });
+
         try {
-            await Promise.all(uploadPromises);
-            setNewChapter(prev => ({
+            await Promise.all([...videoUploadPromises, ...documentUploadPromises]);
+            setDetails(prev => ({
                 ...prev,
-                videos: [...prev.videos]
+                chapters: [...prev.chapters, newChapter]
             }));
-            alert('Chapter videos uploaded successfully!');
+            setNewChapter({ title: '', videos: [], documents: [] });
+            alert('Chapter videos and documents uploaded successfully!');
         } catch (error) {
-            console.error('Error uploading chapter videos: ', error);
+            console.error('Error uploading chapter videos and documents: ', error);
         }
     };
 
@@ -118,9 +188,54 @@ const CourseContent = ({ courses, updateCourseDetails }) => {
                 ...prevDetails,
                 chapters: [...prevDetails.chapters, newChapter]
             }));
-            setNewChapter({ title: '', videos: [] });
+            setNewChapter({ title: '', videos: [], documents: [] });
         } else {
             alert('Please provide both title and at least one video for the chapter.');
+        }
+    };
+
+    const handleDeleteChapter = (chapterIndex) => {
+        if (window.confirm('Are you sure you want to delete this chapter?')) {
+            const updatedChapters = [...details.chapters];
+            updatedChapters.splice(chapterIndex, 1);
+            setDetails(prevDetails => ({
+                ...prevDetails,
+                chapters: updatedChapters
+            }));
+        }
+    };
+
+    const handleEditChapterName = (chapterIndex, newName) => {
+        const updatedChapters = [...details.chapters];
+        updatedChapters[chapterIndex].title = newName;
+        setDetails(prevDetails => ({
+            ...prevDetails,
+            chapters: updatedChapters
+        }));
+    };
+
+    const handleDeleteChapterVideo = (chapterIndex, videoIndex) => {
+        const updatedChapters = [...details.chapters];
+        updatedChapters[chapterIndex].videos.splice(videoIndex, 1);
+        setDetails(prevDetails => ({
+            ...prevDetails,
+            chapters: updatedChapters
+        }));
+    };
+
+    const handleDeleteChapterDocument = async (chapterIndex, documentIndex) => {
+        const storageRef = ref(storage, details.chapters[chapterIndex].documents[documentIndex].documentUrl);
+        try {
+            await deleteObject(storageRef);
+            const updatedChapters = [...details.chapters];
+            updatedChapters[chapterIndex].documents.splice(documentIndex, 1);
+            setDetails(prevDetails => ({
+                ...prevDetails,
+                chapters: updatedChapters
+            }));
+            alert('Document deleted successfully!');
+        } catch (error) {
+            console.error('Error deleting document: ', error);
         }
     };
 
@@ -133,6 +248,12 @@ const CourseContent = ({ courses, updateCourseDetails }) => {
                 course.description.toLowerCase().includes(searchQuery.toLowerCase()))
         );
     });
+
+    const indexOfLastItem = currentPage * itemsPerPage;
+    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+    const currentCourses = filteredCourses.slice(indexOfFirstItem, indexOfLastItem);
+
+    const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
     return (
         <div>
@@ -151,38 +272,34 @@ const CourseContent = ({ courses, updateCourseDetails }) => {
                     <option value="10th Standard">10th Standard</option>
                     <option value="11th Standard">11th Standard</option>
                     <option value="12th Standard">12th Standard</option>
-                    <option value="None">None</option>
+                    <option value="Higher Education">Higher Education</option>
                 </select>
                 <select name="branch" value={filters.branch} onChange={handleFilterChange} className='mr-4'>
                     <option value="">Branch</option>
-                    <option value="Mechanical Engineering">Mechanical Engineering</option>
-                    <option value="Electronics Engineering">Electronics Engineering</option>
-                    <option value="Electronics & Telecommunication Engineering">Electronics & Telecommunication Engineering</option>
-                    <option value="Electrical Engineering">Electrical Engineering</option>
-                    <option value="Production Engineering">Production Engineering</option>
-                    <option value="Civil Engineering">Civil Engineering</option>
-                    <option value="Automobile Engineering">Automobile Engineering</option>
-                    <option value="None">None</option>
+                    <option value="Science">Science</option>
+                    <option value="Commerce">Commerce</option>
+                    <option value="Arts">Arts</option>
+                    <option value="Engineering">Engineering</option>
+                    <option value="Medical">Medical</option>
                 </select>
                 <select name="board" value={filters.board} onChange={handleFilterChange}>
                     <option value="">Board</option>
-                    <option value="ICSE Board">ICSE Board</option>
-                    <option value="CBSE Board">CBSCE Board</option>
-                    <option value="HSC Board">HSC Board</option>
-                    <option value="SSC Board">SSC Board</option>
-                    <option value="None">None</option>
+                    <option value="CBSE">CBSE</option>
+                    <option value="ICSE">ICSE</option>
+                    <option value="State Board">State Board</option>
+                    <option value="IB">IB</option>
                 </select>
             </div>
 
             <table className="min-w-full bg-white">
-                <thead>
+                <thead className="bg-gray-800">
                     <tr>
-                        <th className="py-2 px-4 border-b">Course Name</th>
-                        <th className="py-2 px-4 border-b">Description</th>
-                        <th className="py-2 px-4 border-b">Standard</th>
-                        <th className="py-2 px-4 border-b">Branch</th>
-                        <th className="py-2 px-4 border-b">Board</th>
-                        <th className="py-2 px-4 border-b">Actions</th>
+                        <th className="w-1/6 py-2 px-4 border-b">Course Name</th>
+                        <th className="w-1/6 py-2 px-4 border-b">Description</th>
+                        <th className="w-1/6 py-2 px-4 border-b">Standard</th>
+                        <th className="w-1/6 py-2 px-4 border-b">Branch</th>
+                        <th className="w-1/6 py-2 px-4 border-b">Board</th>
+                        <th className="w-1/6 py-2 px-4 border-b">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -201,6 +318,12 @@ const CourseContent = ({ courses, updateCourseDetails }) => {
                     ))}
                 </tbody>
             </table>
+
+            <div className='pagination'>
+                <button onClick={() => paginate(currentPage - 1)} disabled={currentPage === 1}>Previous</button>
+                    <span>{currentPage}</span>
+                <button onClick={() => paginate(currentPage + 1)} disabled={indexOfLastItem >= filteredCourses.length}>Next</button>
+            </div>
 
             <Modal show={showModal} onClose={() => setShowModal(false)}>
                 {isEditing && selectedCourse && (
@@ -249,19 +372,53 @@ const CourseContent = ({ courses, updateCourseDetails }) => {
                                             className='admin_input'
                                         />
                                     </div>
+                                    <div>
+                                        <h1>Upload Preview Video:</h1>
+                                        <input
+                                            type="file"
+                                            accept="video/*"
+                                            onChange={handlePreviewVideoChange}
+                                            className='admin_input'
+                                        />
+                                    </div>
+                                    <div>
+                                        <button type="button" onClick={handlePreviewVideoUpload} className='admin_button pl-4 pr-4 mt-2'>Upload Preview Video</button>
+                                    </div>
                                 </div>
                             </div>
                             <div>
-                            <h2>Chapters</h2>
-                            {details.chapters && details.chapters.map((chapter, index) => (
-                                <div key={index}>
-                                    <h3>{chapter.title}</h3>
-                                    {chapter.videos && chapter.videos.map((video, vIndex) => (
-                                        <video key={vIndex} src={video.videoUrl} controls width="300"></video>
-                                    ))}
-                                </div>
-                            ))}
-                        </div>
+                                <h2>Chapters</h2>
+                                {details.chapters && details.chapters.map((chapter, index) => (
+                                    <div key={index}>
+                                        <div>
+                                            <h3>Chapter {index + 1}</h3>
+                                            <input
+                                                type="text"
+                                                value={chapter.title}
+                                                onChange={(e) => handleEditChapterName(index, e.target.value)}
+                                            />
+                                            <button onClick={() => handleDeleteChapter(index)}>Delete Chapter</button>
+                                            <div>
+                                                {chapter.videos && chapter.videos.map((video, vIndex) => (
+                                                    <div key={vIndex}>
+                                                        <video src={video.videoUrl} controls width="300"></video>
+                                                        <button onClick={() => handleDeleteChapterVideo(index, vIndex)}>Delete Video</button>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                            <div>
+                                                {chapter.documents && chapter.documents.map((document, dIndex) => (
+                                                    <div key={dIndex}>
+                                                        <a href={document.documentUrl} target="_blank" rel="noopener noreferrer">Document {dIndex + 1}</a>
+                                                        <button onClick={() => handleDeleteChapterDocument(index, dIndex)}>Delete Document</button>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                            <hr className="mb-4 mt-4" />
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
                             <div>
                                 <h2>Add New Chapter</h2>
                                 <input
@@ -277,7 +434,13 @@ const CourseContent = ({ courses, updateCourseDetails }) => {
                                     onChange={handleChapterChange}
                                     multiple // Allow multiple video selection
                                 />
-                                <button type="button" onClick={handleChapterUpload}>Upload Video(s)</button>
+                                <input
+                                    type="file"
+                                    name="document"
+                                    onChange={handleChapterChange}
+                                    multiple // Allow multiple document selection
+                                />
+                                <button type="button" onClick={handleChapterUpload}>Upload Video(s) & Document(s)</button>
                                 <button type="button" onClick={addChapter}>Add Chapter</button>
                             </div>
                             <button type="submit" className="btn btn-primary">Save</button>
@@ -300,12 +463,23 @@ const CourseContent = ({ courses, updateCourseDetails }) => {
                             <p>{selectedCourse.requirements}</p>
                         </div>
                         <div>
+                            {selectedCourse.videoUrl && (
+                                <div>
+                                    <h2>Course Preview Video:</h2>
+                                    <video src={selectedCourse.videoUrl} controls className='w-200 h-80'></video>
+                                </div>
+                            )}
+                        </div>
+                        <div>
                             <h2>Chapters</h2>
                             {details.chapters && details.chapters.map((chapter, index) => (
                                 <div key={index}>
                                     <h3>{chapter.title}</h3>
                                     {chapter.videos && chapter.videos.map((video, vIndex) => (
                                         <video key={vIndex} src={video.videoUrl} controls width="300"></video>
+                                    ))}
+                                    {chapter.documents && chapter.documents.map((document, dIndex) => (
+                                        <a key={dIndex} href={document.documentUrl} target="_blank" rel="noopener noreferrer">Document {dIndex + 1}</a>
                                     ))}
                                 </div>
                             ))}

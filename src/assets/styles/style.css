@@ -542,6 +542,12 @@
     color: var(--text-red-color);
 }
 
+@media (max-width: 768px) {
+    .condition_title, .condition {
+        font-size: 50px;
+    }
+}
+
 /* SHOPPING CART */
 .cart_table {
     width: 100%;
@@ -621,4 +627,20 @@
       padding: 10px 120px;
       font-size: 14px;
     }
-  }
+}
+
+/* MY LEARNING PAGE */
+.my_learning_title {
+    font-size: 96px;
+    font-weight: 700;
+}
+
+.learning {
+    color: var(--text-red-color);
+}
+
+@media (max-width: 768px) {
+    .my_learning_title, .learning {
+        font-size: 50px;
+    }
+}

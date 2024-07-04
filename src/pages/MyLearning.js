@@ -3,7 +3,6 @@ import { firestore } from '../firebase';
 import { Link } from 'react-router-dom';
 import { collection, query, where, getDocs } from 'firebase/firestore';
 import '../assets/styles/style.css';
-// import CourseDetail from '../pages/CourseDetail';
 
 function MyLearning() {
   const [courses, setCourses] = useState([]);
@@ -37,15 +36,18 @@ function MyLearning() {
   }
 
   return (
-    <div className='mt-32'>
-      <h1 className='profile_title'>My Learning</h1>
-      <div className='grid md:grid-cols-2 grid-cols-1 gap-4'>
+    <div className='mt-32 md:pl-32 md:pr-32'>
+      <h1 className='my_learning_title'>My <span className='learning'>Learning</span></h1>
+      <div>
         {courses.map((course, index) => (
           <div key={index} className='course-item'>
             <h3 className='text-2xl font-bold'>{course.name}</h3>
             <Link to={`/course/${course.name}`}>
-              View Course
+              Go To Course
             </Link>
+            <hr
+              className='mt-4 mb-4'
+            />
           </div>
         ))}
       </div>

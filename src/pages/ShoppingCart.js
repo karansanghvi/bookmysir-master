@@ -1,15 +1,41 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { CartContext } from '../components/contexts/CartContext';
 import '../assets/styles/style.css';
 import { Link } from 'react-router-dom';
+import { firestore } from '../firebase';
+import { collection, query, where, getDocs } from 'firebase/firestore';
 
 function ShoppingCart() {
   const { cart, removeFromCart, getTotalPrice } = useContext(CartContext);
+  const [purchasedCourses, setPurchasedCourses] = useState([]);
+
+  useEffect(() => {
+    const fetchPurchasedCourses = async () => {
+      const userId = localStorage.getItem('userID');
+      if (userId) {
+        const coursesRef = collection(firestore, 'purchasedCourses');
+        const q = query(coursesRef, where('userId', '==', userId));
+
+        try {
+          const querySnapshot = await getDocs(q);
+          const purchasedCoursesData = querySnapshot.docs.map(doc => doc.data());
+          setPurchasedCourses(purchasedCoursesData);
+        } catch (e) {
+          console.error('Error fetching purchased courses: ', e);
+        }
+      }
+    };
+
+    fetchPurchasedCourses();
+  }, []);
+
+  // Filter out purchased courses from the cart
+  const cartCourses = cart.filter(course => !purchasedCourses.find(purchasedCourse => purchasedCourse.name === course.name));
 
   return (
-    <section className='mt-32 md:pl-32 md:pr-32'>
+    <section className='mt-32 md:pl-32 md:pr-32 pl-4 pr-4'>
       <h1 className='condition_title'>Shopping <span className='condition'>Cart</span></h1>
-      {cart.length === 0 ? (
+      {cartCourses.length === 0 ? (
         <p>Your cart is empty</p>
       ) : (
         <div>
@@ -22,7 +48,7 @@ function ShoppingCart() {
               </tr>
             </thead>
             <tbody>
-              {cart.map((course, index) => (
+              {cartCourses.map((course, index) => (
                 <tr key={index} className='cart_item'>
                   <td>{course.name}</td>
                   <td>₹{course.price}</td>
