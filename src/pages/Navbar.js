@@ -1,14 +1,19 @@
-// Navbar.js
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { Outlet, Link, useNavigate } from "react-router-dom";
 import logo from '../assets/images/bookmysir_logo.png';
 import '../assets/styles/style.css';
 import UserDropdown from '../components/UserDropdown';
 
-function Navbar() {
-  const [isMenuOpen, setMenuOpen] = useState(false);
-  const [userName, setUserName] = useState(null);
+function Navbar({ userName, setUserName }) {
+  const [isMenuOpen, setMenuOpen] = React.useState(false);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const storedUserName = localStorage.getItem('userName');
+    if (storedUserName) {
+      setUserName(storedUserName);
+    }
+  }, [setUserName]);
 
   const toggleMenu = () => {
     setMenuOpen(!isMenuOpen);
@@ -17,12 +22,12 @@ function Navbar() {
   useEffect(() => {
     const fetchUserName = async () => {
       const userID = localStorage.getItem('userID');
-      const storedUserName = localStorage.getItem('userName');
-
-      if (userID && storedUserName) {
-        setUserName(storedUserName);
-      } else {
-        setUserName(null);
+      if (userID) {
+        const userDoc = await getDoc(doc(firestore, "login", userID));
+        if (userDoc.exists()) {
+          // setUserName(userDoc.data().name);
+          setUserName('Profile');
+        }
       }
     };
 
@@ -30,7 +35,7 @@ function Navbar() {
   }, []);
 
   const handleLogout = () => {
-    localStorage.removeItem('userID');
+    localStorage.removeItem('userName');
     setUserName(null);
     navigate('/login');
   };
@@ -43,7 +48,6 @@ function Navbar() {
             <img src={logo} className="md:h-20 h-10" alt="NFC Logo" />
           </a>
           
-          {/* hamburger */}
           <button
             onClick={toggleMenu}
             className="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-black rounded-lg hover:bg-backgroundColor focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-black dark:hover:bg-backgroundColor dark:focus:ring-black md:hidden"
@@ -56,20 +60,19 @@ function Navbar() {
             </svg>
           </button>
 
-          {/* items for mobile view */}
           <div className={`items-center justify-between w-full md:hidden ${isMenuOpen ? 'block' : 'hidden'}`} id="navbar-cta">
             <ul className="flex flex-col font-medium p-4 mt-4 border  rounded-lg bg-gray-50 md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 md:bg-white text-lg">
               <li>
-                <Link to="/" className="navbartext"aria-current="page">Home</Link>
+                <Link to="/" className="navbartext" aria-current="page">Home</Link>
               </li>
               <li>
-                <Link to="/aboutus" className="navbartext"aria-current="page">About Us</Link>
+                <Link to="/aboutus" className="navbartext" aria-current="page">About Us</Link>
               </li>
               <li>
-                <Link to="/courses" className="navbartext"aria-current="page">Courses</Link>
+                <Link to="/courses" className="navbartext" aria-current="page">Courses</Link>
               </li>
               <li>
-                <Link to="/hometution" className="navbartext"aria-current="page">Home Tutions</Link>
+                <Link to="/hometution" className="navbartext" aria-current="page">Home Tutions</Link>
               </li>
               <li>
                 <a href="/contact" className="navbartext">Contact Us</a>
@@ -84,24 +87,23 @@ function Navbar() {
             </ul>
           </div>
 
-          {/* items for desktop view */}
           <div className="items-center justify-between hidden w-full md:flex md:w-auto md:order-1" id="navbar-cta">
             <ul className="flex flex-col font-medium p-4 mt-4 border  rounded-lg bg-gray-50 md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 md:bg-white text-lg">
-                <li>
-                    <Link to="/" className="navbartext"aria-current="page">Home</Link>
-                </li>
-                <li>
-                    <Link to="/aboutus" className="navbartext"aria-current="page">About Us</Link>
-                </li>
-                <li>
-                    <Link to="/courses" className="navbartext"aria-current="page">Courses</Link>
-                </li>
-                <li>
-                  <Link to="/hometution" className="navbartext"aria-current="page">Home Tutions</Link>
-                </li>
-                <li>
-                    <a href="/contact" className="navbartext">Contact Us</a>
-                </li>
+              <li>
+                <Link to="/" className="navbartext" aria-current="page">Home</Link>
+              </li>
+              <li>
+                <Link to="/aboutus" className="navbartext" aria-current="page">About Us</Link>
+              </li>
+              <li>
+                <Link to="/courses" className="navbartext" aria-current="page">Courses</Link>
+              </li>
+              <li>
+                <Link to="/hometution" className="navbartext" aria-current="page">Home Tutions</Link>
+              </li>
+              <li>
+                <a href="/contact" className="navbartext">Contact Us</a>
+              </li>
               <li>
                 {userName ? (
                   <UserDropdown userName={userName} onLogout={handleLogout} />

@@ -6,7 +6,7 @@ import 'remixicon/fonts/remixicon.css';
 function Footer() {
 
   const emailAddress = "bookmysir@gmail.com";
-  const phoneNumber = "+91-88500839932"
+  const phoneNumber = "+91-9355078783"
 
   return (
     <>
@@ -25,9 +25,9 @@ function Footer() {
         </div>
         <div className='footer_nav_contact md:ml-0 ml-10'>
           <i className="ri-mail-fill" style={{ fontSize: '20px', marginRight: '10px' }}></i>
-          <Link to={`mailto:${emailAddress}`} style={{fontSize: '20px', fontWeight: '500'}}>info@bookmysir.com</Link>
+          <Link to={`mailto:${emailAddress}`} style={{fontSize: '20px', fontWeight: '500'}}>bookmysir@gmail.com</Link>
           <i className="ri-phone-fill md:ml-40 ml-0" style={{ fontSize: '20px' }}></i>
-          <Link to={`tel:${phoneNumber}`} style={{fontSize: '20px', fontWeight: '500'}}>+91-88500839932</Link>
+          <Link to={`tel:${phoneNumber}`} style={{fontSize: '20px', fontWeight: '500'}}>+91-9355078783</Link>
         </div>
         <div className="h-px bg-black md:ml-32 md:mr-32 mt-10"></div>
         <div className='footer_nav_copyright mt-4'>

@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { CartContext } from '../components/contexts/CartContext';
 import '../assets/styles/style.css';
 import '../assets/styles/courses.css';
@@ -10,6 +10,7 @@ function Checkout() {
   const { cart, getTotalPrice } = useContext(CartContext);
   const studentDetails = JSON.parse(localStorage.getItem('studentDetails'));
   const userId = localStorage.getItem('userID');
+  const navigate = useNavigate();
 
   const handlePayment = async () => {
     const options = {
@@ -38,6 +39,7 @@ function Checkout() {
         handler: async function (response) {
           console.log(response);
           await savePurchasedCourses();
+          navigate('/mylearning');
         },
         prefill: {
           name: studentDetails?.fullName || '',

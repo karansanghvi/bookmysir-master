@@ -30,8 +30,19 @@
     padding-left: 10px;
 }
 
-.styledInput::placeholder {
+.styledInput::placeholder, .styledInputSignup::placeholder {
     color: black;
+    padding-left: 10px;
+}
+
+.styledInputSignup {
+    background-color: #ECECEC;
+    width: 210px;
+    height: 60px;
+    border-radius: 10px;
+    caret-color: #000;
+    color: black;
+    font-weight: bold;
     padding-left: 10px;
 }
 
@@ -44,6 +55,9 @@
 
 @media (max-width: 768px) {
     .styledInput {
+        width: 300px;
+    }
+    .styledInputSignup {
         width: 300px;
     }
 }
@@ -542,6 +556,12 @@
     color: var(--text-red-color);
 }
 
+@media (max-width: 768px) {
+    .condition_title, .condition {
+        font-size: 50px;
+    }
+}
+
 /* SHOPPING CART */
 .cart_table {
     width: 100%;
@@ -621,4 +641,32 @@
       padding: 10px 120px;
       font-size: 14px;
     }
-  }
+}
+
+/* MY LEARNING PAGE */
+.my_learning_title {
+    font-size: 96px;
+    font-weight: 700;
+}
+
+.learning {
+    color: var(--text-red-color);
+}
+
+.my_learning_find {
+    background-color: var(--base-bg-color);
+    padding: 10px 140px;
+    font-size: 20px;
+    font-weight: 700;
+    margin-top: 10px;
+    border-radius: 10px;
+}
+
+@media (max-width: 768px) {
+    .my_learning_title, .learning {
+        font-size: 50px;
+    }
+    .my_learning_find {
+        padding: 10px 80px;
+    }
+}

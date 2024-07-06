@@ -25,21 +25,31 @@ import Checkout from './pages/Checkout';
 function App() {
   const [courses, setCourses] = useState(() => {
     const savedCourses = localStorage.getItem('courses');
-    console.log("Initial load from localStorage:", savedCourses);
     return savedCourses ? JSON.parse(savedCourses) : [];
   });
 
   useEffect(() => {
-    console.log("Updating localStorage with courses:", courses);
     localStorage.setItem('courses', JSON.stringify(courses));
   }, [courses]);
+
+  const [userName, setUserName] = useState(() => {
+    const storedUserName = localStorage.getItem('userName');
+    return storedUserName ? storedUserName : null;
+  });
 
   const location = useLocation();
   const isAdminRoute = location.pathname === '/admin';
 
+  useEffect(() => {
+    const storedUserName = localStorage.getItem('userName');
+    if (storedUserName) {
+      setUserName(storedUserName);
+    }
+  }, []);
+
   return (
     <>
-      {!isAdminRoute && <Navbar />}
+      {!isAdminRoute && <Navbar userName={userName} setUserName={setUserName} />}
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="aboutus" element={<AboutUs />} />
@@ -48,16 +58,16 @@ function App() {
         <Route path="course/:name" element={<CourseDetail courses={courses} />} />
         <Route path="hometution" element={<HomeTution />} />
         <Route path="contact" element={<Contact />} />
-        <Route path="login" element={<Login />} />
-        <Route path="signup" element={<Signup />} />
+        <Route path="login" element={<Login setUserName={setUserName} />} />
+        <Route path="signup" element={<Signup setUserName={setUserName} />} />
         <Route path="termsandconditions" element={<TermsAndConditions />} />
         <Route path="privacypolicy" element={<PrivacyPolicy />} />
         <Route path="cart" element={<ShoppingCart />} />
-        <Route path="mylearning" element={<MyLearning/>} />
-        <Route path="coursescompleted" element={<CoursesCompleted/>} />
-        <Route path="profile" element={<Profile/>}/>
-        <Route path="studentdetails" element={<StudentDetails/>} />
-        <Route path="checkout" element={<Checkout/>} />
+        <Route path="mylearning" element={<MyLearning />} />
+        <Route path="coursescompleted" element={<CoursesCompleted />} />
+        <Route path="profile" element={<Profile />} />
+        <Route path="studentdetails" element={<StudentDetails />} />
+        <Route path="checkout" element={<Checkout />} />
       </Routes>
       {!isAdminRoute && <Footer />}
     </>
