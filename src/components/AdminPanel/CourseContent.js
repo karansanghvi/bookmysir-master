@@ -23,8 +23,6 @@ const CourseContent = ({ courses, updateCourseDetails }) => {
     const [showModal, setShowModal] = useState(false);
     const [newChapter, setNewChapter] = useState({ title: '', videos: [], documents: [] });
     const [previewVideo, setPreviewVideo] = useState(null);
-    const [currentPage, setCurrentPage] = useState(1);
-    const [itemsPerPage] = useState(20);
 
     const handlePreviewVideoChange = (e) => {
         setPreviewVideo(e.target.files[0]);
@@ -249,12 +247,6 @@ const CourseContent = ({ courses, updateCourseDetails }) => {
         );
     });
 
-    const indexOfLastItem = currentPage * itemsPerPage;
-    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-    const currentCourses = filteredCourses.slice(indexOfFirstItem, indexOfLastItem);
-
-    const paginate = (pageNumber) => setCurrentPage(pageNumber);
-
     return (
         <div>
             <h1 className='text-4xl font-bold mb-4'>Course Content</h1>
@@ -318,12 +310,6 @@ const CourseContent = ({ courses, updateCourseDetails }) => {
                     ))}
                 </tbody>
             </table>
-
-            <div className='pagination'>
-                <button onClick={() => paginate(currentPage - 1)} disabled={currentPage === 1}>Previous</button>
-                    <span>{currentPage}</span>
-                <button onClick={() => paginate(currentPage + 1)} disabled={indexOfLastItem >= filteredCourses.length}>Next</button>
-            </div>
 
             <Modal show={showModal} onClose={() => setShowModal(false)}>
                 {isEditing && selectedCourse && (

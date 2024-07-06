@@ -1,48 +1,37 @@
-import React, { useRef, useState, useContext } from 'react';
+import React, { useState, useEffect } from 'react';
 import '../assets/styles/style.css';
 import login_img from '../assets/images/Login-rafiki.png';
 import { Link, useNavigate } from 'react-router-dom';
-import { firestore } from '../firebase';
-import { collection, query, where, getDocs } from 'firebase/firestore';
-import { CartContext } from '../components/contexts/CartContext';
+import { auth } from '../firebase';
+import { signInWithEmailAndPassword } from 'firebase/auth';
 
-function Login() {
-  const emailRef = useRef();
-  const passwordRef = useRef();
-  const [popup, setPopup] = useState(false);
-  const ref = collection(firestore, "login");
+function Login({ setUserName }) {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const navigate = useNavigate();
-  const { fetchCart } = useContext(CartContext);
 
-  const handleLoginSubmit = async (e) => {
+  const handleLoginSubmitButton = async (e) => {
     e.preventDefault();
 
-    let email = emailRef.current.value;
-    let password = passwordRef.current.value;
-
-    const q = query(ref, where("email", "==", email));
-
     try {
-      const querySnapshot = await getDocs(q);
-      if (querySnapshot.empty) {
-        setPopup(true); // Email not found
-      } else {
-        const userDoc = querySnapshot.docs[0];
-        const userData = userDoc.data();
-
-        if (password === userData.password) {
-          localStorage.setItem('userID', userDoc.id); 
-          console.log("Login successful");
-          await fetchCart(userDoc.id); // Fetch the user's cart data
-          navigate('/');
-        } else {
-          setPopup(true);
-        }
-      }
-    } catch (e) {
-      console.log("Error with login database: ", e);
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+      localStorage.setItem('userName', user.displayName); // Assuming Firebase stores the display name
+      setUserName(user.displayName);
+      alert("User logged in!!");
+      navigate('/');
+    } catch (error) {
+      console.error("Error logging in:", error.message);
+      // Handle error here, such as displaying an error message to the user
     }
-  };
+  }
+
+  useEffect(() => {
+    const storedUserName = localStorage.getItem('userName');
+    if (storedUserName) {
+      setUserName(storedUserName);
+    }
+  }, [setUserName]);
 
   return (
     <section className='mt-32 md:pl-32'>
@@ -53,41 +42,40 @@ function Login() {
             <img src={login_img} alt="" className='image_login' />
           </div>
           <div className='md:mr-32 mr-4 md:ml-0 ml-4 rounded-lg shadow-lg'>
-            <form onSubmit={handleLoginSubmit}>
+            <form onSubmit={handleLoginSubmitButton}>
               <h1 className='mt-4 ml-8'>Enter Email Address:</h1>
               <input 
                 type="email" 
                 name="email" 
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 required
                 className='ml-8 styledInput' 
                 placeholder='Email Address'
-                ref={emailRef}
               />
               <h1 className='mt-4 ml-8'>Enter Password:</h1>
               <input 
                 type="password"
                 name="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 required
                 className='ml-8 styledInput'
                 placeholder='Password'
-                ref={passwordRef}
               />
               <div className='container'>
-                <button className='submit_button mt-4 md:pl-52 pl-32 md:pr-52 pr-32 pt-2 pb-2' type="submit">Login</button>
+                <button 
+                  className='submit_button mt-4 md:pl-52 pl-32 md:pr-52 pr-32 pt-2 pb-2' 
+                  type="submit"
+                >
+                  Login
+                </button>
               </div>
               <h1 className='text-lg font-semibold text-center mt-4'>Don't have an account? <Link to="/signup">Signup</Link></h1>
             </form>
           </div>
         </div>
       </div>
-      {popup && (
-        <div className='popup'>
-          <div className='popup_inner'>
-            <h1>Incorrect email or password. Please try again.</h1>
-            <button onClick={() => setPopup(false)}>Close</button>
-          </div>
-        </div>
-      )}
     </section> 
   );
 }

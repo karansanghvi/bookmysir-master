@@ -95,7 +95,7 @@ const AddCourseModal = ({ currentCourse, setCurrentCourse, handleSubmit, isEditi
 
 const ViewCoursesModal = ({ courses, handleEdit, handleDelete, onClose, handleFilterChange, filters }) => {
   const [currentPage, setCurrentPage] = useState(1);
-  const [perPage] = useState(5); // Number of items per page
+  const [perPage] = useState(20); // Number of items per page
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
