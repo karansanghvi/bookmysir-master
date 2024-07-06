@@ -7,6 +7,7 @@ import CourseContent from '../components/AdminPanel/CourseContent';
 import HomeTutionAdminPanel from '../components/AdminPanel/HomeTutionAdminPanel';
 import UsersAdminPanel from '../components/AdminPanel/UsersAdminPanel';
 import PurchasedCoursesAdminPanel from '../components/AdminPanel/PurchasedCoursesAdminPanel';
+import ContactUsAdminPanel from '../components/AdminPanel/ContactUsAdminPanel';
 
 Modal.setAppElement('#root');
 
@@ -106,6 +107,9 @@ const AdminPage = ({ courses, setCourses }) => {
                                     <li className={`cursor-pointer ${activeTab === 5 ? 'bg-gray-400' : 'bg-gray-200'} px-4 py-2 rounded mb-2`} onClick={() => handleTabClick(5)}>
                                         Purchased Courses
                                     </li>
+                                    <li className={`cursor-pointer ${activeTab === 6 ? 'bg-gray-400' : 'bg-gray-200'} px-4 py-2 rounded mb-2`} onClick={() => handleTabClick(6)}>
+                                        Contact Us Queries
+                                    </li>
                                 </ul>
                             </div>
                         </div>
@@ -115,6 +119,7 @@ const AdminPage = ({ courses, setCourses }) => {
                             {activeTab === 3 && <UsersAdminPanel />}
                             {activeTab === 4 && <HomeTutionAdminPanel />}
                             {activeTab === 5 && <PurchasedCoursesAdminPanel/>}
+                            {activeTab === 6 && <ContactUsAdminPanel/>}
                         </div>
                     </div>
                 </div>

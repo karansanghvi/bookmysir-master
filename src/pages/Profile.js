@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import { firestore } from '../firebase'; // Adjust the path as per your project structure
+import { firestore } from '../firebase'; // Import Firestore dependencies from your Firebase configuration
+import { addDoc, collection } from 'firebase/firestore';
 import '../assets/styles/style.css';
 
 function Profile() {
@@ -12,40 +13,24 @@ function Profile() {
   const [collegeName, setCollegeName] = useState('');
   const [collegeMarks, setCollegeMarks] = useState('');
 
-  // Firestore collection reference
-  const profileRef = firestore.collection('profiles');
-
-  // Function to handle form submission
-  const handleSave = async () => {
+  const saveProfile = async () => {
     try {
-      // Construct data object to be saved
-      const data = {
-        name: state?.name || '',
-        phoneNumber: state?.phoneNumber || '',
-        email: state?.email || '',
-        address,
-        schoolName,
-        schoolMarks,
-        collegeName,
-        collegeMarks,
+      const profileData = {
+        name: state && state.name,
+        phoneNumber: state && state.phoneNumber,
+        email: state && state.email,
+        address: address,
+        schoolName: schoolName,
+        schoolMarks: schoolMarks,
+        collegeName: collegeName,
+        collegeMarks: collegeMarks
       };
 
-      // Save data to Firestore
-      await profileRef.add(data);
-
-      // Optionally, you can reset the form fields after successful submission
-      setAddress('');
-      setSchoolName('');
-      setSchoolMarks('');
-      setCollegeName('');
-      setCollegeMarks('');
-
-      // Provide feedback to the user (e.g., success message)
-      alert('Profile data saved successfully!');
+      const docRef = await addDoc(collection(firestore, 'profilePage'), profileData);
+      console.log('Document written with ID: ', docRef.id);
+      // Optionally, you can add a success message or clear form fields after saving
     } catch (error) {
-      console.error('Error saving profile:', error);
-      // Handle error (e.g., show error message)
-      alert('Failed to save profile data. Please try again later.');
+      console.error('Error adding document: ', error);
     }
   };
 
@@ -120,7 +105,7 @@ function Profile() {
         </div>
       </div>
       <div className="button-container">
-        <button type="button" onClick={handleSave}>Save</button>
+        <button type="button" onClick={saveProfile}>Save</button>
       </div>
     </div>
   );
