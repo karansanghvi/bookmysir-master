@@ -16,29 +16,14 @@ function Signup({ setUserName }) {
   const handleSignupSubmitButton = async (e) => {
     e.preventDefault();
 
-    let signupData = {
-      name: nameRef.current.value,
-      phoneNumber: phoneNumberRef.current.value,
-      email: emailRef.current.value,
-      password: passwordRef.current.value
-    };
-
-    // Hashing the password using bcrypt
-    // const hashedPassword = await bcrypt.hash(signupData.password, 10);
-    // signupData.password = hashedPassword;
-
-    const q = query(loginRef, where("email", "==", signupData.email));
-
     try {
-      const querySnapshot = await getDocs(q);
-      if (!querySnapshot.empty) {
-        setPopup(true);
-      } else {
-        const userDocRef = await addDoc(signupRef, signupData);
-        await setDoc(doc(loginRef, userDocRef.id), signupData);
-        console.log("Signup successful");
-        localStorage.setItem('userID', userDocRef.id); 
-        navigate('/');
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      if (userCredential) {
+        localStorage.setItem('userName', name); // Store username in localStorage
+        setUserName(name); // Set username in state
+
+        alert("Account created!!");
+        navigate('/profile', { state: { name, email, phoneNumber } }); // Navigate to profile with user data
       }
     } catch (error) {
       console.log("Error in signup:", error.message);

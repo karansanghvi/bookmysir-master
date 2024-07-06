@@ -13,30 +13,23 @@ function Login({ setUserName }) {
   const handleLoginSubmitButton = async (e) => {
     e.preventDefault();
 
-    let email = emailRef.current.value;
-    let password = passwordRef.current.value;
-
-    const q = query(ref, where("email", "==", email));
-
     try {
-      const querySnapshot = await getDocs(q);
-      if (querySnapshot.empty) {
-        setPopup(true); // Email not found
-      } else {
-        const userDoc = querySnapshot.docs[0];
-        const userData = userDoc.data();
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+      localStorage.setItem('userName', user.displayName); // Assuming Firebase stores the display name
+      setUserName(user.displayName);
+      alert("User logged in!!");
+      navigate('/');
+    } catch (error) {
+      console.error("Error logging in:", error.message);
+      // Handle error here, such as displaying an error message to the user
+    }
+  }
 
-        if (password === userData.password) {
-          localStorage.setItem('userID', userDoc.id); 
-          console.log("Login successful");
-          await fetchCart(userDoc.id); // Fetch the user's cart data
-          navigate('/');
-        } else {
-          setPopup(true);
-        }
-      }
-    } catch (e) {
-      console.log("Error with login database: ", e);
+  useEffect(() => {
+    const storedUserName = localStorage.getItem('userName');
+    if (storedUserName) {
+      setUserName(storedUserName);
     }
   }, [setUserName]);
 

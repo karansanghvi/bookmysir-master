@@ -19,21 +19,6 @@ function Navbar({ userName, setUserName }) {
     setMenuOpen(!isMenuOpen);
   };
 
-  useEffect(() => {
-    const fetchUserName = async () => {
-      const userID = localStorage.getItem('userID');
-      if (userID) {
-        const userDoc = await getDoc(doc(firestore, "login", userID));
-        if (userDoc.exists()) {
-          // setUserName(userDoc.data().name);
-          setUserName('Profile');
-        }
-      }
-    };
-
-    fetchUserName();
-  }, []);
-
   const handleLogout = () => {
     localStorage.removeItem('userName');
     setUserName(null);
