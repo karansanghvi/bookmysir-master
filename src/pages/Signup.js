@@ -41,6 +41,7 @@ function Signup() {
         await setDoc(doc(loginRef, userDocRef.id), signupData);
         console.log("Signup successful");
         localStorage.setItem('userID', userDocRef.id); 
+        localStorage.setItem('userName', signupData.name);
         navigate('/');
       }
     } catch (e) {

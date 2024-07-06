@@ -32,6 +32,7 @@ function Login() {
 
         if (password === userData.password) {
           localStorage.setItem('userID', userDoc.id); 
+          localStorage.setItem('userName', userData.name);
           console.log("Login successful");
           await fetchCart(userDoc.id); // Fetch the user's cart data
           navigate('/');
