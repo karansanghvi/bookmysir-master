@@ -66,7 +66,7 @@ function Navbar({ userName, setUserName }) {
                 {userName ? (
                   <UserDropdown userName={userName} onLogout={handleLogout} />
                 ) : (
-                  <a href="/login" className="navbartext">Login</a>
+                  <a href="/login" className="text-black font-bold loginbutton">Login</a>
                 )}
               </li>
             </ul>

@@ -3,7 +3,7 @@ import '../assets/styles/style.css';
 import signup_img from '../assets/images/Mobile login-rafiki.png';
 import { Link, useNavigate } from 'react-router-dom';
 import { auth } from '../firebase';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 
 function Signup({ setUserName }) {
   const [name, setName] = useState('');
@@ -18,7 +18,10 @@ function Signup({ setUserName }) {
 
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      if (userCredential) {
+      const user = userCredential.user;
+      await updateProfile(user, { displayName: name });
+
+      if (user) {
         localStorage.setItem('userName', name); // Store username in localStorage
         setUserName(name); // Set username in state
 
@@ -93,7 +96,7 @@ function Signup({ setUserName }) {
                 />
                 <h1 className='mt-4 ml-8'>Enter Password:</h1>
                 <input 
-                  type="password" 
+                  type="password"
                   name="password"
                   id="password"
                   value={password}

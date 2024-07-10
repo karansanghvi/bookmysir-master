@@ -16,7 +16,8 @@ function Login({ setUserName }) {
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
-      localStorage.setItem('userName', user.displayName); // Assuming Firebase stores the display name
+      localStorage.setItem('userName', user.displayName); // Store the display name
+      localStorage.setItem('userID', user.uid); // Store the user ID
       setUserName(user.displayName);
       alert("User logged in!!");
       navigate('/');
