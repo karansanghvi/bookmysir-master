@@ -4,6 +4,8 @@ import login_img from '../assets/images/Login-rafiki.png';
 import { Link, useNavigate } from 'react-router-dom';
 import { auth } from '../firebase';
 import { signInWithEmailAndPassword } from 'firebase/auth';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function Login({ setUserName }) {
   const [email, setEmail] = useState('');
@@ -19,11 +21,11 @@ function Login({ setUserName }) {
       localStorage.setItem('userName', user.displayName); // Store the display name
       localStorage.setItem('userID', user.uid); // Store the user ID
       setUserName(user.displayName);
-      alert("User logged in!!");
+      toast.success("User logged in!!");
       navigate('/');
     } catch (error) {
       console.error("Error logging in:", error.message);
-      // Handle error here, such as displaying an error message to the user
+      toast.error(`Error logging in: ${error.message}`);
     }
   }
 
@@ -77,6 +79,7 @@ function Login({ setUserName }) {
           </div>
         </div>
       </div>
+      <ToastContainer />
     </section> 
   );
 }

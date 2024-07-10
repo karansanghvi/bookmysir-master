@@ -4,6 +4,8 @@ import signup_img from '../assets/images/Mobile login-rafiki.png';
 import { Link, useNavigate } from 'react-router-dom';
 import { auth } from '../firebase';
 import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function Signup({ setUserName }) {
   const [name, setName] = useState('');
@@ -22,14 +24,14 @@ function Signup({ setUserName }) {
       await updateProfile(user, { displayName: name });
 
       if (user) {
-        localStorage.setItem('userName', name); // Store username in localStorage
-        setUserName(name); // Set username in state
+        localStorage.setItem('userName', name); 
+        setUserName(name);
 
-        alert("Account created!!");
-        navigate('/profile', { state: { name, email, phoneNumber } }); // Navigate to profile with user data
+        toast.success("Account created!!");
+        navigate('/profile', { state: { name, email, phoneNumber } }); 
       }
     } catch (error) {
-      console.log("Error in signup:", error.message);
+      toast.error(`Error in signup: ${error.message}`);
     }
   };
 
@@ -120,6 +122,7 @@ function Signup({ setUserName }) {
           </div>
         </div>
       </section> 
+      <ToastContainer />
     </>
   );
 }

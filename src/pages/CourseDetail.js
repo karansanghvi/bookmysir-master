@@ -12,20 +12,22 @@ import 'react-tabs/style/react-tabs.css';
 import { IoIosArrowBack, IoIosCheckmarkCircleOutline } from "react-icons/io";
 import { BsFillLockFill } from "react-icons/bs";
 import ReactPlayer from 'react-player';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const CourseDetail = ({ courses }) => {
   const { name } = useParams();
   const navigate = useNavigate();
   const { addToCart } = useContext(CartContext);
   const course = courses.find((course) => course.name === name);
-  const [showModal, setShowModal] = useState(false);
+  // const [showModal, setShowModal] = useState(false);
   const isLoggedIn = localStorage.getItem('userID');
   const [isPurchased, setIsPurchased] = useState(false);
   const [selectedChapter, setSelectedChapter] = useState(null);
   const [selectedTabIndex, setSelectedTabIndex] = useState(0);
   const courseContentRef = useRef(null);
   const [viewedLectures, setViewedLectures] = useState([]);
-  const [showCompletionModal, setShowCompletionModal] = useState(false);
+  // const [showCompletionModal, setShowCompletionModal] = useState(false);
 
   useEffect(() => {
     const fetchPurchasedCourses = async () => {
@@ -54,22 +56,15 @@ const CourseDetail = ({ courses }) => {
     }
   }, [selectedChapter, name]);
 
-  // const handleAddToCart = () => {
-  //   if (isLoggedIn) {
-  //     addToCart({ ...course, price: 500 });
-  //     navigate('/cart');
-  //   } else {
-  //     setShowModal(true);
-  //   }
-  // };
-
   const handleAddToCart = () => {
     const user = auth.currentUser;
     if (user) {
       addToCart({ ...course, price: 500 });
       navigate('/cart');
+      toast.success('Course added to cart!');
     } else {
-      setShowModal(true);
+      // setShowModal(true);
+      toast.info('Kindly log in to buy the course')
     }
   }
 
@@ -83,7 +78,7 @@ const CourseDetail = ({ courses }) => {
 
   const handleVideoClick = (videoUrl, vIndex) => {
     if (!isPurchased) {
-      console.log("Purchase the course to see the video");
+      toast.info("Purchase the course to see the video");
       return;
     }
 
@@ -118,7 +113,8 @@ const CourseDetail = ({ courses }) => {
       completedCourses.push(newCompletedCourse);
       localStorage.setItem('completedCourses', JSON.stringify(completedCourses));
 
-      setShowCompletionModal(true);
+      // setShowCompletionModal(true);
+      toast.success('Congratulations!! You have completed the course');
     }
   };
 
@@ -301,7 +297,9 @@ const CourseDetail = ({ courses }) => {
         </div>
       </section>
 
-      {showModal && (
+      <ToastContainer/>
+
+      {/* {showModal && (
         <div className='add_to_cart_modal'>
           <div className='add_to_cart_modal_content'>
             <h1 className='mb-2'>Please log in to buy the course</h1>
@@ -321,7 +319,7 @@ const CourseDetail = ({ courses }) => {
             </button>
           </div>
         </div>
-      )}
+      )} */}
     </>
   );
 };
