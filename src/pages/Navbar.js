@@ -1,29 +1,78 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useContext } from 'react';
 import { Outlet, Link, useNavigate } from "react-router-dom";
 import logo from '../assets/images/bookmysir_logo.png';
 import '../assets/styles/style.css';
 import UserDropdown from '../components/UserDropdown';
+import { auth } from '../firebase';
+import { CartContext } from '../components/contexts/CartContext';
 
-function Navbar({ userName, setUserName }) {
+function Navbar() {
+  // const [isMenuOpen, setMenuOpen] = React.useState(false);
+  // const navigate = useNavigate();
+  // const { clearCart } = useContext(CartContext);
+
+  // useEffect(() => {
+  //   const storedUserName = localStorage.getItem('userName');
+  //   if (storedUserName) {
+  //     setUserName(storedUserName);
+  //   }
+  // }, [setUserName]);
+
+  // const toggleMenu = () => {
+  //   setMenuOpen(!isMenuOpen);
+  // };
+
+  // const handleLogout = () => {
+  //   auth.signOut()
+  //     .then(() => {
+  //       localStorage.removeItem('userID');
+  //       localStorage.removeItem('userName');
+  //       clearCart();
+  //       setUserName(null);
+  //       navigate('/login');
+  //     })
+  //     .catch((error) => {
+  //       console.error('Error signing out: ', error);
+  //     });
+  // };
+  const [userName, setUserName] = React.useState(null);
   const [isMenuOpen, setMenuOpen] = React.useState(false);
   const navigate = useNavigate();
+  const { clearCart } = useContext(CartContext);
 
   useEffect(() => {
-    const storedUserName = localStorage.getItem('userName');
-    if (storedUserName) {
-      setUserName(storedUserName);
-    }
-  }, [setUserName]);
+    const unsubscribe = auth.onAuthStateChanged(user => {
+      if (user) {
+        setUserName(user.displayName); // Set username in state
+        localStorage.setItem('userName', user.displayName); // Store username in localStorage
+      } else {
+        setUserName(null);
+        localStorage.removeItem('userName'); // Remove username from localStorage
+      }
+    });
+
+    return () => unsubscribe(); // Unsubscribe from the listener when component unmounts
+  }, []);
 
   const toggleMenu = () => {
     setMenuOpen(!isMenuOpen);
   };
 
   const handleLogout = () => {
-    localStorage.removeItem('userName');
-    setUserName(null);
-    navigate('/login');
+    auth.signOut()
+      .then(() => {
+        localStorage.removeItem('userID');
+        localStorage.removeItem('userName');
+        clearCart();
+        setUserName(null);
+        navigate('/login');
+      })
+      .catch((error) => {
+        console.error('Error signing out: ', error);
+      });
   };
+  
+  
 
   return (
     <>

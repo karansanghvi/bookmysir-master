@@ -4,30 +4,34 @@ import '../assets/styles/style.css';
 import { Link } from 'react-router-dom';
 import { firestore } from '../firebase';
 import { collection, query, where, getDocs } from 'firebase/firestore';
+import { auth } from '../firebase';
 
 function ShoppingCart() {
   const { cart, removeFromCart, getTotalPrice } = useContext(CartContext);
   const [purchasedCourses, setPurchasedCourses] = useState([]);
 
   useEffect(() => {
-    const fetchPurchasedCourses = async () => {
-      const userId = localStorage.getItem('userID');
-      if (userId) {
-        const coursesRef = collection(firestore, 'purchasedCourses');
-        const q = query(coursesRef, where('userId', '==', userId));
-
-        try {
-          const querySnapshot = await getDocs(q);
-          const purchasedCoursesData = querySnapshot.docs.map(doc => doc.data());
-          setPurchasedCourses(purchasedCoursesData);
-        } catch (e) {
-          console.error('Error fetching purchased courses: ', e);
-        }
+    const unsubscribe = auth.onAuthStateChanged(user => {
+      if (user) {
+        fetchPurchasedCourses(user.uid);
       }
-    };
+    });
 
-    fetchPurchasedCourses();
+    return () => unsubscribe();
   }, []);
+
+  const fetchPurchasedCourses = async (uid) => {
+    const coursesRef = collection(firestore, 'purchasedCourses');
+    const q = query(coursesRef, where('userId', '==', uid));
+
+    try {
+      const querySnapshot = await getDocs(q);
+      const purchasedCoursesData = querySnapshot.docs.map(doc => doc.data());
+      setPurchasedCourses(purchasedCoursesData);
+    } catch (e) {
+      console.error('Error fetching purchased courses: ', e);
+    }
+  };
 
   // Filter out purchased courses from the cart
   const cartCourses = cart.filter(course => !purchasedCourses.find(purchasedCourse => purchasedCourse.name === course.name));

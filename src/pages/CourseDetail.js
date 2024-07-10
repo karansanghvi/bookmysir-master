@@ -5,7 +5,7 @@ import video from '../assets/images/ph_video.png';
 import downloadable_resources from '../assets/images/ic_baseline-download.png';
 import mobile from '../assets/images/uiw_mobile.png';
 import '../assets/styles/courses.css';
-import { firestore } from '../firebase';
+import { auth, firestore } from '../firebase';
 import { collection, query, where, getDocs } from 'firebase/firestore';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
@@ -54,14 +54,24 @@ const CourseDetail = ({ courses }) => {
     }
   }, [selectedChapter, name]);
 
+  // const handleAddToCart = () => {
+  //   if (isLoggedIn) {
+  //     addToCart({ ...course, price: 500 });
+  //     navigate('/cart');
+  //   } else {
+  //     setShowModal(true);
+  //   }
+  // };
+
   const handleAddToCart = () => {
-    if (isLoggedIn) {
+    const user = auth.currentUser;
+    if (user) {
       addToCart({ ...course, price: 500 });
       navigate('/cart');
     } else {
       setShowModal(true);
     }
-  };
+  }
 
   const handleGoToCourse = () => {
     if (courseContentRef.current) {

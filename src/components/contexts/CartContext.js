@@ -1,50 +1,55 @@
 // CartContext.js
 import React, { createContext, useState, useEffect } from 'react';
-import { firestore } from '../../firebase';
+import { auth, firestore } from '../../firebase';
 import { collection, addDoc, query, where, getDocs } from 'firebase/firestore';
+import { onAuthStateChanged } from 'firebase/auth';
 
 export const CartContext = createContext();
 
 export const CartProvider = ({ children }) => {
   const [cart, setCart] = useState([]);
-  const userId = localStorage.getItem('userID');
+  const [userId, setUserId] = useState(null);
 
   useEffect(() => {
-    const fetchCartItems = async () => {
-      if (userId) {
-        const cartRef = collection(firestore, 'cartItems');
-        const q = query(cartRef, where('userId', '==', userId));
-
-        try {
-          const querySnapshot = await getDocs(q);
-          const cartItemsData = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-          setCart(cartItemsData);
-        } catch (e) {
-          console.error('Error fetching cart items: ', e);
-        }
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setUserId(user.uid);
+        fetchCartItems(user.uid);
+      } else {
+        setUserId(null);
+        setCart([]);
       }
-    };
+    });
 
-    fetchCartItems();
-  }, [userId]);
+    return () => unsubscribe();
+  }, []);
 
- // CartContext.js
+  const fetchCartItems = async (uid) => {
+    const cartRef = collection(firestore, 'cartItems');
+    const q = query(cartRef, where('userId', '==', uid));
 
-const addToCart = async (course) => {
-  if (userId) {
-    const cartItem = { ...course, userId };
     try {
-      const docRef = await addDoc(collection(firestore, 'cartItems'), cartItem);
-      console.log('Item added to cart:', { id: docRef.id, ...cartItem });
-      setCart([...cart, { id: docRef.id, ...cartItem }]);
+      const querySnapshot = await getDocs(q);
+      const cartItemsData = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      setCart(cartItemsData);
     } catch (e) {
-      console.error('Error adding item to cart: ', e);
+      console.error('Error fetching cart items: ', e);
     }
-  } else {
-    alert('Please log in to add items to the cart');
-  }
-};
+  };
 
+  const addToCart = async (course) => {
+    if (userId) {
+      const cartItem = { ...course, userId };
+      try {
+        const docRef = await addDoc(collection(firestore, 'cartItems'), cartItem);
+        setCart([...cart, { id: docRef.id, ...cartItem }]);
+      } catch (e) {
+        console.error('Error adding item to cart: ', e);
+      }
+    } else {
+      alert('Please log in to add items to the cart');
+    }
+  };
 
   const removeFromCart = async (courseName) => {
     if (userId) {
